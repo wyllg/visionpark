@@ -1,4 +1,4 @@
-# VisionPark Web Dashboard 🚗🅿️
+# VisionPark Web Dashboard
 
 Welcome to the frontend repository for **VisionPark**, our automated parking management system. This project is built using **Next.js (App Router)**, **Tailwind CSS**, and **Clerk** for secure Role-Based Access Control (RBAC).
 
@@ -6,13 +6,13 @@ This guide will help the team get the project up and running locally so we can a
 
 ---
 
-## 📋 Prerequisites
+## Prerequisites
 
 Before you begin, ensure you have **Node.js** installed on your machine (v18.x or higher is recommended for modern Next.js).
 
 ---
 
-## 🚀 Getting Started
+## Getting Started
 
 Follow these steps to set up the VisionPark frontend on your local machine.
 
@@ -39,15 +39,9 @@ Because we are utilizing Clerk to handle our Driver, Worker, and Admin logins, t
 ```env
 NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=your_publishable_key_here
 CLERK_SECRET_KEY=your_secret_key_here
-
-# Custom Auth Routes
-NEXT_PUBLIC_CLERK_SIGN_IN_URL=/auth/login
-NEXT_PUBLIC_CLERK_SIGN_UP_URL=/auth/signup
-NEXT_PUBLIC_CLERK_AFTER_SIGN_IN_URL=/
-NEXT_PUBLIC_CLERK_AFTER_SIGN_UP_URL=/
 ```
 
-> ⚠️ **Never commit the `.env.local` file to GitHub.** It is safely ignored in our `.gitignore` to prevent our security keys from leaking.
+> **Never commit the `.env.local` file to GitHub.** It is safely ignored in our `.gitignore` to prevent our security keys from leaking.
 
 ---
 
@@ -63,7 +57,7 @@ Open [http://localhost:3000](http://localhost:3000) with your browser to see the
 
 ---
 
-## 🏗️ Project Structure Highlights
+## Project Structure Highlights
 
 For team members jumping into the code, here is a quick map of our most important frontend files:
 
@@ -72,7 +66,7 @@ For team members jumping into the code, here is a quick map of our most importan
 | `src/app/layout.js` | Our persistent frame — contains global UI wrappers, the custom Navbar, and the `<ClerkProvider>` that wraps the whole app for authentication. |
 | `src/app/page.js` | The main dynamic content — holds unique content depending on whether the user is a guest, driver, worker, or admin. |
 | `src/app/auth/` | Contains our custom Clerk routing pages for `/auth/login` and `/auth/signup`. |
-| `components/` | Stores reusable UI pieces, like our smart `CustomNavbar.js`. |
+| `src/app/components/` | Stores reusable UI pieces. |
 
 ---
 
