@@ -2,7 +2,7 @@
 
 import { useUser, useAuth, useOrganization } from '@clerk/nextjs';
 import Link from 'next/link';
-import LiveParkingTable from './components/LiveParkingTable';
+import ActiveParkingTable from './components/ActiveParkingTable';
 
 export default function YourComponent() {
   const { isLoaded: isAuthLoaded, userId } = useAuth();
@@ -10,6 +10,7 @@ export default function YourComponent() {
   const { organization } = useOrganization();
   const orgName = organization?.name?.toLowerCase();
 
+  // Error Handling and Loading Component
   if (!isAuthLoaded || !isUserLoaded) {
     return (
       <div className="flex min-h-[50vh] items-center justify-center p-8">
@@ -27,7 +28,6 @@ export default function YourComponent() {
         <h2 className="text-xl font-bold mb-2">VisionPark System Status</h2>
         <p>This box is visible to absolutely anyone who visits the page.</p>
       </div>
-      <LiveParkingTable />
 
       {userId && (
         <>
@@ -36,17 +36,19 @@ export default function YourComponent() {
             <div className="flex flex-col gap-2 text-gray-700">
               <p><strong>Name:</strong> {user?.firstName} {user?.lastName}</p>
               <p><strong>Email:</strong> {user?.primaryEmailAddress?.emailAddress}</p>
-              <p><strong>Organization:</strong> {organization ? organization.name : "Standard User"}</p>
+              <p><strong>Organization:</strong> {organization ? organization.name : "User"}</p>
             </div>
           </div>
 
           {orgName === 'admin' && (
             <div className="p-6 rounded-lg shadow-md border border-red-200 bg-red-50 text-red-800">
-              <h2 className="font-bold text-lg">ADMIN VIEW</h2>
+              <h2 className="font-bold text-lg hover:text-blue-700">
+                <Link href="/pages/admin">
+                  ADMIN PAGE
+                </Link>
+              </h2>
               <p>Management analytics and audit trails go here.</p>
-              <Link className="text-gray-700" href="/pages/admin">
-                Admin Page
-              </Link>
+
             </div>
             
           )}
@@ -59,6 +61,8 @@ export default function YourComponent() {
           )}
         </>
       )}
+
+      <ActiveParkingTable />
     </div>
   );
 }

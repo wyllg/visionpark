@@ -1,7 +1,7 @@
 # backend/app/api/public_parking.py
+import os
 from fastapi import APIRouter
 from supabase import create_client, Client
-import os
 from dotenv import load_dotenv
 
 load_dotenv(".env.local")
@@ -17,8 +17,8 @@ supabase: Client = create_client(url, key)
 router = APIRouter()
 
 
-@router.get("/api/parking/live-status")
-def get_live_parking_status():
+@router.get("/api/parking/active")
+def get_active_parking_status():
     try:
         # Fetch ONLY active parking sessions
         response = supabase.table("licenseplate").select(

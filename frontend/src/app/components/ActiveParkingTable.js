@@ -1,9 +1,8 @@
-// frontend/src/components/ui/LiveParkingTable.js
 'use client';
 
 import { useState, useEffect } from 'react';
 
-export default function LiveParkingTable() {
+export default function ActiveParkingTable() {
   const [vehicles, setVehicles] = useState([]);
   const [currentTime, setCurrentTime] = useState(new Date());
   const [isLoading, setIsLoading] = useState(true);
@@ -12,7 +11,7 @@ export default function LiveParkingTable() {
   useEffect(() => {
     const fetchParkingData = async () => {
       try {
-        const res = await fetch('http://localhost:8000/api/parking/live-status');
+        const res = await fetch('http://localhost:8000/api/parking/active');
         const json = await res.json();
         if (json.status === 'success') {
           setVehicles(json.data);
@@ -84,7 +83,7 @@ export default function LiveParkingTable() {
   return (
     <div className="bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden">
       <div className="p-4 bg-gray-50 border-b border-gray-200 flex justify-between items-center">
-        <h2 className="text-lg font-bold text-gray-800">Live Parking Status</h2>
+        <h2 className="text-lg font-bold text-gray-800">LIVE PARKING STATUS</h2>
         <span className="text-sm text-gray-500 font-mono">
           System Time: {currentTime.toLocaleTimeString()}
         </span>
@@ -96,9 +95,9 @@ export default function LiveParkingTable() {
             <th className="p-4 font-semibold">License</th>
             <th className="p-4 font-semibold">Time In</th>
             <th className="p-4 font-semibold">Time Elapsed</th>
-            <th className="p-4 font-semibold">Time Out</th>
+            {/* <th className="p-4 font-semibold">Time Out</th> */}
             <th className="p-4 font-semibold">Status</th>
-            <th className="p-4 font-semibold text-right">Total Fee (PHP)</th>
+            <th className="p-4 font-semibold text-right">To Be Paid (PHP)</th>
           </tr>
         </thead>
         <tbody className="divide-y divide-gray-100 text-sm">
@@ -112,7 +111,7 @@ export default function LiveParkingTable() {
                 <td className="p-4 font-bold text-gray-800">{car.plate_number}</td>
                 <td className="p-4 text-gray-600">{new Date(car.time_in).toLocaleTimeString()}</td>
                 <td className="p-4 text-gray-600">{elapsedTime(car.time_in, car.time_out)}</td>
-                <td className="p-4 text-gray-600">{car.time_out ? new Date(car.time_out).toLocaleTimeString() : '--:--'}</td>
+                {/* <td className="p-4 text-gray-600">{car.time_out ? new Date(car.time_out).toLocaleTimeString() : '--:--'}</td> */}
                 <td className="p-4">
                   <span className={`px-3 py-1 rounded-full text-xs font-bold ${
                     car.status === 'Active' ? 'bg-green-100 text-green-700' :

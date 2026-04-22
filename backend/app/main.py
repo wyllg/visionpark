@@ -1,13 +1,13 @@
 # backend/app/main.py
 
 import os
-from fastapi import FastAPI, APIRouter
+from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from dotenv import load_dotenv
 
 # 1. Import your feature routes here
 # (Assuming you saved the live parking status code in backend/app/api/public_parking.py)
-
+from app.api import active_parking, exited_parking
 
 # 2. Load Environment Variables from your .env.local file
 # This ensures your Supabase keys and database URLs are securely loaded
@@ -23,7 +23,7 @@ app = FastAPI(
 # 4. Configure CORS (Cross-Origin Resource Sharing)
 # THIS IS CRITICAL: Without this, your browser will block Next.js from talking to FastAPI!
 origins = [
-    "http://localhost:8000",  # Your local Next.js frontend
+    "http://localhost:3000",  # Your local Next.js frontend
     # You will add your actual production domain here later (e.g., "https://visionpark.vercel.app")
 ]
 
@@ -37,7 +37,8 @@ app.add_middleware(
 
 # 5. Connect your Feature Routers
 # This tells FastAPI: "If a request comes in for /api/parking/live-status, use the code in public_parking.py"
-
+app.include_router(active_parking.router)
+app.include_router(exited_parking.router)
 
 # Optional: Add any future routes here as you build them!
 # app.include_router(auth.router)
@@ -50,4 +51,3 @@ def read_root():
         "status": "online",
         "message": "Welcome to the VisionPark API Gateway. Systems are nominal."
     }
-
