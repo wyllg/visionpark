@@ -77,3 +77,7 @@ To learn more about the specific technologies we are using to build VisionPark, 
 - [Next.js Documentation](https://nextjs.org/docs) — Learn about Next.js features and API.
 - [Clerk Next.js Authentication Guide](https://clerk.com/docs/quickstarts/nextjs) — Learn how our authentication wrappers work.
 - [Tailwind CSS Docs](https://tailwindcss.com/docs) — A quick reference guide for our styling utility classes.
+
+
+
+uvicorn app.main:app --reload
