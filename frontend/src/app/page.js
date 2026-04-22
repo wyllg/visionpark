@@ -2,6 +2,7 @@
 
 import { useUser, useAuth, useOrganization } from '@clerk/nextjs';
 import Link from 'next/link';
+import LiveParkingTable from './components/LiveParkingTable';
 
 export default function YourComponent() {
   const { isLoaded: isAuthLoaded, userId } = useAuth();
@@ -9,6 +10,7 @@ export default function YourComponent() {
   const { organization } = useOrganization();
   const orgName = organization?.name?.toLowerCase();
 
+  // Fallback
   if (!isAuthLoaded || !isUserLoaded) {
     return (
       <div className="flex min-h-[50vh] items-center justify-center p-8">
@@ -21,11 +23,15 @@ export default function YourComponent() {
 
   return (
     <div className="p-6 max-w-4xl mx-auto space-y-6">
+
+      {/* USERS WITHOUT ACCOUNTS */}
       <div className="p-6 bg-green-50 border border-green-200 rounded-lg text-green-900">
         <h2 className="text-xl font-bold mb-2">VisionPark System Status</h2>
         <p>This box is visible to absolutely anyone who visits the page.</p>
       </div>
+      {/* <LiveParkingTable /> */}
 
+      {/* USERS WITH ACCOUNTS */}
       {userId && (
         <>
           <div className="p-6 rounded-lg shadow-md border border-gray-200 bg-white">
@@ -37,6 +43,7 @@ export default function YourComponent() {
             </div>
           </div>
 
+          {/* USERS WITH ACCOUNTS AND ADMIN ROLE */}
           {orgName === 'admin' && (
             <div className="p-6 rounded-lg shadow-md border border-red-200 bg-red-50 text-red-800">
               <h2 className="font-bold text-lg">ADMIN VIEW</h2>
@@ -48,6 +55,7 @@ export default function YourComponent() {
             
           )}
 
+          {/* USERS WITH ACCOUNT AND WORKER ROLE */}
           {orgName === 'worker' && (
             <div className="p-6 rounded-lg shadow-md border border-blue-200 bg-blue-50 text-blue-800">
               <h2 className="font-bold text-lg">WORKER VIEW</h2>

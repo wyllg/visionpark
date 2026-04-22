@@ -1,0 +1,15 @@
+# --- Core API Framework ---
+fastapi==0.110.0
+uvicorn[standard]==0.29.0
+
+# --- Environment & Security ---
+python-dotenv==1.0.1
+
+# --- Database (Supabase / Postgres) ---
+supabase==2.4.3
+psycopg2-binary
+
+# --- Future Integrations (From your proposal) ---
+redis==5.0.3        # For rapid session updates
+gspread==6.1.0      # For Google Sheets API sync
+oauth2client==4.1.3 # Required for Google Sheets authentication
