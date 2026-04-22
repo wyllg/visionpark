@@ -2,6 +2,7 @@
 
 import { useUser, useAuth, useOrganization } from '@clerk/nextjs';
 import Link from 'next/link';
+import LiveParkingTable from './components/LiveParkingTable';
 
 export default function YourComponent() {
   const { isLoaded: isAuthLoaded, userId } = useAuth();
@@ -16,6 +17,7 @@ export default function YourComponent() {
           Loading VisionPark
         </div>
       </div>
+      
     );
   }
 
@@ -25,6 +27,7 @@ export default function YourComponent() {
         <h2 className="text-xl font-bold mb-2">VisionPark System Status</h2>
         <p>This box is visible to absolutely anyone who visits the page.</p>
       </div>
+      <LiveParkingTable />
 
       {userId && (
         <>
