@@ -3,6 +3,7 @@
 import { useUser, useAuth, useOrganization } from '@clerk/nextjs';
 import Link from 'next/link';
 import ActiveParkingTable from './components/ActiveParkingTable';
+import ExitedParkingTable from './components/ExitedParkingTable';
 
 export default function YourComponent() {
   const { isLoaded: isAuthLoaded, userId } = useAuth();
@@ -63,6 +64,7 @@ export default function YourComponent() {
       )}
 
       <ActiveParkingTable />
+      <ExitedParkingTable />
     </div>
   );
 }
