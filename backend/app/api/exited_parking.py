@@ -32,7 +32,7 @@ def get_exited_parking_status():
     return {"status": "error", "message": str(e)}
   
 
-@router.post("/api/parking/checkout/{plate_number}")
+@router.post("/api/parking/checkout")
 def checkout_car(plate_number: str):
     try:
         # 1. Find the currently Active session for this exact license plate
@@ -56,7 +56,7 @@ def checkout_car(plate_number: str):
         billable_hours = math.ceil(elapsed_hours)
         total_fee = max(30, billable_hours * 30) # 30 PHP minimum, 30 per hour
         
-        # 4. Update the row in Supabase permanently!
+        # 4. Update the row in Supabase permanently
         update_data = {
             "status": "Exited",
             "time_out": time_out.isoformat(),
