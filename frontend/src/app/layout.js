@@ -5,8 +5,12 @@ import Navbar from "./navbar";
 export const metadata = {
   title: "VisionPark",
   description: "-W",
+  icons: {
+    icon: '/vercel.svg',
+  },
 };
 
+// { children } renders page.js
 export default function RootLayout({ children }) {
 
   return (
