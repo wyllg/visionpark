@@ -16,14 +16,13 @@ supabase: Client = create_client(url, key)
 
 router = APIRouter()
 
-
-@router.get("/api/parking/active")
-def get_active_parking_status():
+@router.get("/api/parking/pending")
+def active_status():
     try:
         # Fetch ONLY active parking sessions
         response = supabase.table("licenseplate").select(
-            "plate_number, time_in, time_out, status"
-        ).neq("status", "Exited").order("time_in", desc=True).limit(50).execute()
+            "id, plate_number, time_in, time_out, status"
+        ).eq("status", "Pending").order("time_in", desc=True).limit(50).execute()
         
         return {"status": "success", "data": response.data}
         

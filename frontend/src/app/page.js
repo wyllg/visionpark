@@ -4,6 +4,7 @@ import { useUser, useAuth, useOrganization } from '@clerk/nextjs';
 import Link from 'next/link';
 import ActiveParkingTable from './components/ActiveParkingTable';
 import ExitedParkingTable from './components/ExitedParkingTable';
+import WorkerApproval from './components/WorkerApproval';
 
 export default function YourComponent() {
   const { isLoaded: isAuthLoaded, userId } = useAuth();
@@ -55,10 +56,13 @@ export default function YourComponent() {
           )}
 
           {orgName === 'worker' && (
-            <div className="p-6 rounded-lg shadow-md border border-blue-200 bg-blue-50 text-blue-800">
-              <h2 className="font-bold text-lg">WORKER VIEW</h2>
-              <p>Error Correction Mode and Shift Handover go here.</p>
-            </div>
+            <>
+              <div className="p-6 rounded-lg shadow-md border border-blue-200 bg-blue-50 text-blue-800">
+                <h2 className="font-bold text-lg">WORKER VIEW</h2>
+                <p>Error Correction Mode and Shift Handover go here.</p>
+              </div>
+              <WorkerApproval />
+            </>
           )}
         </>
       )}

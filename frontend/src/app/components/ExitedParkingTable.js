@@ -24,7 +24,7 @@ export default function ExitedParkingTable() {
     };
     
     fetchParkingData();
-    const dbInterval = setInterval(fetchParkingData, 30000);
+    const dbInterval = setInterval(fetchParkingData, 3000);
     return () => clearInterval(dbInterval);
   }, []);
 

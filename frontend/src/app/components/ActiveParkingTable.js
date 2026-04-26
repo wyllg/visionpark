@@ -26,7 +26,7 @@ export default function ActiveParkingTable() {
     fetchParkingData();
     
     // Optional: Auto-refresh the database data every 30 seconds
-    const dbInterval = setInterval(fetchParkingData, 30000);
+    const dbInterval = setInterval(fetchParkingData, 3000);
     return () => clearInterval(dbInterval);
   }, []);
 
