@@ -17,7 +17,7 @@ def simulate_camera_detection():
   detected_plate = random.choice(SAMPLE_PLATES)
   print(f"Car detected with license plate of {detected_plate}")
 
-  payload = {"plate_number": detected_plate}
+  payload = {"original_plate_read": detected_plate}
 
   try:
     print(f"Sending to FastAPI")

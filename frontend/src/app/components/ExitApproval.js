@@ -2,7 +2,7 @@
 import { useState, useEffect, useRef } from 'react';
 
 
-export default function WorkerApproval() {
+export default function ExitApproval() {
   const [pendingCars, setPendingCars] = useState([]);
   const localEdits = useRef({}); // { [id]: plate_number }
 
@@ -45,6 +45,8 @@ export default function WorkerApproval() {
       if (result.status === 'success') {
         delete localEdits.current[id]; // Clean up the saved edit
         setPendingCars(prev => prev.filter(car => car.id !== id));
+
+        if (onApprove) onApprove();
       }
     } catch (error) {
       console.error("Approval failed", error);
@@ -61,11 +63,11 @@ export default function WorkerApproval() {
   };
 
   return (
-    <div className="p-6 bg-yellow-50 rounded-xl">
-      <h2 className="text-xl font-bold text-yellow-800 mb-4">Action Required: Approve Arrivals</h2>
+    <div className="p-6 bg-red-50 rounded-xl">
+      <h2 className="text-xl font-bold text-red-800 mb-4">Action Required: Exit Approval</h2>
       
       {pendingCars.length === 0 ? (
-        <p className="text-gray-500">No new cars waiting for approval.</p>
+        <p className="text-gray-500">No exiting cars waiting for approval.</p>
       ) : (
         <div className="space-y-4">
           {pendingCars.map(car => (

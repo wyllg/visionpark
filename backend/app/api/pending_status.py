@@ -21,7 +21,7 @@ def active_status():
     try:
         # Fetch ONLY active parking sessions
         response = supabase.table("licenseplate").select(
-            "id, plate_number, time_in, time_out, status"
+            "id, plate_number, time_in, time_out, status, original_plate_read"
         ).eq("status", "Pending").order("time_in", desc=True).limit(50).execute()
         
         return {"status": "success", "data": response.data}
