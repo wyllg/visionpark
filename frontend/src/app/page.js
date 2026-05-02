@@ -5,6 +5,7 @@ import Link from 'next/link';
 import ActiveParkingTable from './components/ActiveParkingTable';
 import ExitedParkingTable from './components/ExitedParkingTable';
 import WorkerApproval from './components/WorkerApproval';
+import Hero from './components/Hero';
 
 export default function YourComponent() {
   const { isLoaded: isAuthLoaded, userId } = useAuth();
@@ -25,10 +26,10 @@ export default function YourComponent() {
   }
 
   return (
-    <div className="p-6 max-w-4xl mx-auto space-y-6">
+    <div className="p-5 max-w-screen">
+      <Hero />
       <div className="p-6 bg-green-50 border border-green-200 rounded-lg text-green-900">
-        <h2 className="text-xl font-bold mb-2">VisionPark System Status</h2>
-        <p>This box is visible to absolutely anyone who visits the page.</p>
+        <h2 className="text-xl font-bold">Welcome to VisionPark</h2>
       </div>
 
       {userId && (
