@@ -79,7 +79,6 @@ export default function WorkerApproval() {
                   <input
                     type="text"
                     value={car.plate_number}
-                    initialPlate={car.plate_number}
                     onChange={(e) => handleInputChange(car.id, e.target.value)}
                     className="uppercase border font-bold border-gray-300 rounded px-2 py-1 text-gray-700 focus:outline-none focus:border-yellow-500"
                   />
