@@ -5,26 +5,9 @@
   src: url('/fonts/License.ttf') format('truetype');
 }
 
-/* 1. LIGHT MODE (Default) */
 :root {
   --background: #ffffff;
   --foreground: #171717;
-}
-
-/* 2. SYSTEM DARK MODE (Automatic) */
-/* This triggers if the user's device is set to dark mode */
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #171717; /* Truly dark background */
-    --foreground: #ffffff; /* White text */
-  }
-}
-
-/* 3. MANUAL DARK MODE (For a React toggle button) */
-/* If you add <html className="dark"> via a button, this overrides everything else */
-.dark {
-  --background: #171717;
-  --foreground: #ffffff;
 }
 
 @theme inline {
