@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 
-export default function ActiveParkingTable() {
+export default function ActiveParkingTable({ refreshTrigger }) {
   const [vehicles, setVehicles] = useState([]);
   const [currentTime, setCurrentTime] = useState(new Date());
   const [isLoading, setIsLoading] = useState(true);
@@ -25,10 +25,7 @@ export default function ActiveParkingTable() {
     
     fetchParkingData();
     
-    // Optional: Auto-refresh the database data every 30 seconds
-    const dbInterval = setInterval(fetchParkingData, 3000);
-    return () => clearInterval(dbInterval);
-  }, []);
+  }, [refreshTrigger]);
 
   // 2. The Ticking Clock: Update the local time every second to drive the live math
   useEffect(() => {

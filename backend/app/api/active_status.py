@@ -1,4 +1,4 @@
-# backend/app/api/public_parking.py
+# THIS API IS ONLY FOR GETTING THE CARS THAT ARE CURRENTLY ACTIVE
 import os
 from fastapi import APIRouter
 from supabase import create_client, Client
@@ -21,7 +21,7 @@ def active_status():
     try:
         # Fetch ONLY active parking sessions
         response = supabase.table("licenseplate").select(
-            "plate_number, time_in, time_out, status"
+            "plate_number, time_in, time_out, status, original_plate_read"
         ).eq("status", "Active").order("time_in", desc=True).limit(50).execute()
         
         return {"status": "success", "data": response.data}
