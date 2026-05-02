@@ -40,7 +40,7 @@ if __name__ == "__main__":
             simulate_camera_detection()
             
             # Wait before the "next car" arrives
-            time.sleep(10) 
+            time.sleep(20) 
             
     except KeyboardInterrupt:
         print("\nSimulator stopped by user.")

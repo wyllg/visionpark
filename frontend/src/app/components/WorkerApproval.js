@@ -1,6 +1,7 @@
 'use client';
 import { useState, useEffect, useRef } from 'react';
 
+
 export default function WorkerApproval() {
   const [pendingCars, setPendingCars] = useState([]);
   const localEdits = useRef({}); // { [id]: plate_number }
@@ -31,11 +32,13 @@ export default function WorkerApproval() {
   }, []);
 
   const handleApprove = async (id, currentPlate) => {
+
+    const uppercasePlate = currentPlate.toUpperCase()
     try {
       const res = await fetch('http://localhost:8000/api/parking/approve', {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ id, corrected_plate: currentPlate }),
+        body: JSON.stringify({ id, corrected_plate: uppercasePlate }),
       });
 
       const result = await res.json();
@@ -48,11 +51,12 @@ export default function WorkerApproval() {
     }
   };
 
-  const handleEditPlate = (id, newText) => {
-    const upper = newText.toUpperCase(); 
-    localEdits.current[id] = upper; // Save to ref (no re-render)
-    setPendingCars(prev =>
-      prev.map(car => (car.id === id ? { ...car, plate_number: upper } : car))
+  const handleInputChange = (id, newText) => {
+    localEdits.current[id] = newText; // Save to ref so it survives the 5s polling
+    setPendingCars(prevCars => 
+      prevCars.map(car => 
+        car.id === id ? { ...car, plate_number: newText } : car
+      )
     );
   };
 
@@ -72,11 +76,12 @@ export default function WorkerApproval() {
                 <div className="flex items-center gap-2 mt-1">
                   <span className="font-bold text-gray-700">AI Guess:</span>
                   {/* The editable text box! */}
-                  <input 
-                    type="text" 
+                  <input
+                    type="text"
                     value={car.plate_number}
-                    onChange={(e) => handleEditPlate(car.id, e.target.value)}
-                    className="border-2 border-blue-200 rounded px-2 py-1 font-mono font-bold uppercase text-lg text-blue-800 focus:border-blue-500 outline-none"
+                    initialPlate={car.plate_number}
+                    onChange={(e) => handleInputChange(car.id, e.target.value)}
+                    className="uppercase border font-bold border-gray-300 rounded px-2 py-1 text-gray-700 focus:outline-none focus:border-yellow-500"
                   />
                 </div>
               </div>

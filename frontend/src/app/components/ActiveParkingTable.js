@@ -90,14 +90,14 @@ export default function ActiveParkingTable() {
       </div>
 
       <table className="w-full text-left border-collapse">
-        <thead className="bg-gray-100 text-gray-600 text-sm uppercase">
+        <thead className="bg-gray-100 text-gray-600 text-xs md:text-sm uppercase">
           <tr>
-            <th className="p-4 font-semibold">License</th>
+            <th className="p-4 font-semibold">Plate #</th>
             <th className="p-4 font-semibold">Time In</th>
-            <th className="p-4 font-semibold">Time Elapsed</th>
+            <th className="p-4 font-semibold">Time</th>
             {/* <th className="p-4 font-semibold">Time Out</th> */}
             <th className="p-4 font-semibold">Status</th>
-            <th className="p-4 font-semibold text-right">To Be Paid (PHP)</th>
+            <th className="p-4 font-semibold text-right">To Be Paid</th>
           </tr>
         </thead>
         <tbody className="divide-y divide-gray-100 text-sm">
@@ -112,7 +112,7 @@ export default function ActiveParkingTable() {
                 <td className="p-4 text-gray-600">{new Date(car.time_in).toLocaleTimeString()}</td>
                 <td className="p-4 text-gray-600">{elapsedTime(car.time_in, car.time_out)}</td>
                 {/* <td className="p-4 text-gray-600">{car.time_out ? new Date(car.time_out).toLocaleTimeString() : '--:--'}</td> */}
-                <td className="p-4">
+                <td className="p-4 sm:p3">
                   <span className={`px-3 py-1 rounded-full text-xs font-bold ${
                     car.status === 'Active' ? 'bg-green-100 text-green-700' :
                     car.status === 'Needs_Review' ? 'bg-yellow-100 text-yellow-700' :
