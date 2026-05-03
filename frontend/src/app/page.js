@@ -61,7 +61,7 @@ export default function YourComponent() {
           {/* IF WORKER */}
           {orgName === 'worker' && (
             <>
-              <div className="p-6 rounded-lg shadow-md border border-blue-200 bg-blue-50 text-blue-800">
+              <div className="p-4 rounded-lg shadow-md border border-blue-200 bg-blue-50 text-blue-800">
                 <h2 className="font-bold text-lg">WORKER VIEW</h2>
               </div>
               <EntranceApproval onApprove={handleCarApproved}/>
