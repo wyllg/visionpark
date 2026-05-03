@@ -27,7 +27,7 @@ export default function EntranceApproval({ onApprove }) {
     };
 
     fetchPending();
-    const interval = setInterval(fetchPending, 5000); // TEMPORARY FETCHING TIME WILL CHANGE LATER
+    const interval = setInterval(fetchPending, 1000000); // TEMPORARY FETCHING TIME WILL CHANGE LATER
     return () => clearInterval(interval);
   }, []);
 

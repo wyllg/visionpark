@@ -20,6 +20,10 @@
 /out/
 .next
 
+# python
+/backend/__pycache__/
+/backend/app/__pycache__/
+
 # production
 /build
 

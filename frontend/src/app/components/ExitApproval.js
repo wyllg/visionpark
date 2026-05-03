@@ -27,7 +27,7 @@ export default function ExitApproval() {
     };
 
     fetchPending();
-    const interval = setInterval(fetchPending, 5000);
+    const interval = setInterval(fetchPending, 1000000);
     return () => clearInterval(interval);
   }, []);
 
