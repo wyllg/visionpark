@@ -1,4 +1,3 @@
-# THIS API IS ONLY FOR GETTING THE CARS THAT ARE CURRENTLY ACTIVE
 import os
 from fastapi import APIRouter
 from supabase import create_client, Client
@@ -16,15 +15,14 @@ supabase: Client = create_client(url, key)
 
 router = APIRouter()
 
-@router.get("/api/parking/active")
-def active_status():
+@router.get("/api/worker/status/active")
+def worker_status():
     try:
-        # Fetch ONLY active parking sessions
-        response = supabase.table("licenseplate").select(
-            "plate_number, time_in, time_out, status, original_plate_read"
-        ).eq("status", "Active").order("time_in", desc=True).limit(100).execute()
-        
+        response =  supabase.table("workershift").select(
+            "id, worker_id, worker_name, start_time, exit_shift, status"
+        ).eq("status", "Active").order("start_time", desc=True).limit(10).execute()
+
         return {"status": "success", "data": response.data}
-        
+    
     except Exception as e:
         return {"status": "error", "message": str(e)}

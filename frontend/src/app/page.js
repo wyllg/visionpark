@@ -6,6 +6,7 @@ import Link from 'next/link';
 import ActiveParkingTable from './components/ActiveParkingTable';
 import ExitedParkingTable from './components/ExitedParkingTable';
 import EntranceApproval from './components/EntranceApproval';
+import WorkerShift from './components/WorkerShift';
 // import ExitApproval from './components/ExitApproval';
 import Profile from './components/Profile';
 import Hero from './components/Hero';
@@ -64,7 +65,8 @@ export default function YourComponent() {
               <div className="p-4 rounded-lg shadow-md border border-blue-200 bg-blue-50 text-blue-800">
                 <h2 className="font-bold text-lg">WORKER VIEW</h2>
               </div>
-              <EntranceApproval onApprove={handleCarApproved}/>
+              <WorkerShift onApprove={handleCarApproved} />
+              {/* <EntranceApproval onApprove={handleCarApproved}/> */}
               {/* <ExitApproval /> */}
             </>
           )}

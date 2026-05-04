@@ -12,6 +12,8 @@ from app.api import active_status
 from app.api import exited_parking
 from app.api import pending_status
 from app.api import entry_parking
+from app.api import worker_status
+from app.api import worker_shift
 
 
 # 2. Load Environment Variables from your .env.local file
@@ -46,6 +48,8 @@ app.include_router(active_status.router)
 app.include_router(exited_parking.router)
 app.include_router(entry_parking.router)
 app.include_router(pending_status.router)
+app.include_router(worker_status.router)
+app.include_router(worker_shift.router)
 
 
 # Optional: Add any future routes here as you build them!
