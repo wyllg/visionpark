@@ -7,6 +7,20 @@ export default function ActiveParkingTable({ refreshTrigger }) {
   const [currentTime, setCurrentTime] = useState(new Date());
   const [isLoading, setIsLoading] = useState(true);
 
+  // Helper function to map your DB status to the globals.css badge classes
+  const getBadgeClass = (status) => {
+    if (status === 'Active') return 'badge-active';
+    if (status === 'Needs_Review') return 'badge-pending';
+    return 'badge-exited'; // Default/Fallback
+  };
+
+  // Helper function for the little glowing dot inside the badge
+  const getDotClass = (status) => {
+    if (status === 'Active') return 'bg-green-400';
+    if (status === 'Needs_Review') return 'bg-yellow-400';
+    return 'bg-red-400'; // Default/Fallback
+  };
+
   // 1. Fetch the data from FastAPI when the page loads
   useEffect(() => {
     const fetchParkingData = async () => {
@@ -78,54 +92,79 @@ export default function ActiveParkingTable({ refreshTrigger }) {
   if (isLoading) return <div className="p-8 text-center animate-pulse">Loading Live Status...</div>;
 
   return (
-    <div className="bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden">
-      <div className="p-4 bg-gray-50 border-b border-gray-200 flex justify-between items-center">
-        <h2 className="text-lg font-bold text-gray-800">LIVE PARKING STATUS</h2>
-        <span className="text-sm text-gray-500 font-mono">
-          System Time: {currentTime.toLocaleTimeString()}
-        </span>
+    <div className="w-full max-w-6xl mx-auto space-y-6">
+      
+      {/* HEADER SECTION */}
+      <div className="w-full flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-2 pt-7">
+        <h2 className="license-plate-green text-xl sm:text-xl w-full justify-center">
+          LIVE PARKING
+        </h2>
       </div>
 
-      <table className="w-full text-left border-collapse">
-        <thead className="bg-gray-100 text-gray-600 text-xs md:text-sm uppercase">
-          <tr>
-            <th className="p-4 font-semibold">Plate #</th>
-            <th className="p-4 font-semibold">Time In</th>
-            <th className="p-4 font-semibold">Time</th>
-            {/* <th className="p-4 font-semibold">Time Out</th> */}
-            <th className="p-4 font-semibold">Status</th>
-            <th className="p-4 font-semibold text-right">To Be Paid</th>
-          </tr>
-        </thead>
-        <tbody className="divide-y divide-gray-100 text-sm">
-          {vehicles.length === 0 ? (
-            <tr>
-              <td colSpan="5" className="p-8 text-center text-gray-500">Lot is currently empty.</td>
-            </tr>
-          ) : (
-            vehicles.map((car, idx) => (
-              <tr key={idx} className="hover:bg-gray-50 transition-colors">
-                <td className="p-4 font-bold text-gray-800">{car.plate_number}</td>
-                <td className="p-4 text-gray-600">{new Date(car.time_in).toLocaleTimeString()}</td>
-                <td className="p-4 text-gray-600">{elapsedTime(car.time_in, car.time_out)}</td>
-                {/* <td className="p-4 text-gray-600">{car.time_out ? new Date(car.time_out).toLocaleTimeString() : '--:--'}</td> */}
-                <td className="p-4 sm:p3">
-                  <span className={`px-3 py-1 rounded-full text-xs font-bold ${
-                    car.status === 'Active' ? 'bg-green-100 text-green-700' :
-                    car.status === 'Needs_Review' ? 'bg-yellow-100 text-yellow-700' :
-                    'bg-gray-100 text-gray-700'
-                  }`}>
+      {/* RESPONSIVE DATA CONTAINER (Replaces the Table) */}
+      <div className="space-y-4">
+        {vehicles.length === 0 ? (
+          <div className="glass-panel p-8 text-center text-slate-400 italic">
+            Lot is currently empty.
+          </div>
+        ) : (
+          vehicles.map((car, idx) => (
+            <div 
+              key={idx} 
+              className="glass-panel p-4 flex flex-col md:flex-row md:items-center justify-between gap-4 hover:bg-slate-800/40 transition-colors border-l-4 border-l-green-500"
+            >
+              
+              {/* TOP ROW (Mobile) / LEFT COLUMN (Desktop): Plate & Status */}
+              <div className="flex justify-between items-center md:w-1/4">
+                <div className="font-mono text-xl sm:text-2xl font-bold text-white bg-slate-900 px-3 py-1 rounded border border-slate-700 shadow-inner tracking-wider">
+                  {car.plate_number}
+                </div>
+                {/* Show status here only on mobile */}
+                <div className="md:hidden">
+                  <span className={`badge ${getBadgeClass(car.status)}`}>
+                    <span className={`w-1.5 h-1.5 rounded-full ${getDotClass(car.status)}`}></span>
                     {car.status}
                   </span>
-                </td>
-                <td className="p-4 text-right font-mono font-bold text-purple-700 text-lg">
+                </div>
+              </div>
+
+              {/* MIDDLE ROW (Mobile) / MIDDLE COLUMNS (Desktop): Time Tracking */}
+              <div className="flex flex-row justify-between text-sm md:w-2/4 md:justify-center md:gap-12 bg-slate-900/30 p-3 rounded-lg md:bg-transparent md:p-0">
+                <div className="flex flex-col">
+                  <span className="text-slate-400 text-xs uppercase tracking-widest font-semibold mb-1">Time In</span>
+                  <span className="text-slate-100 font-medium">
+                    {new Date(car.time_in).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                  </span>
+                </div>
+                <div className="flex flex-col">
+                  <span className="text-slate-400 text-xs uppercase tracking-widest font-semibold mb-1">Duration</span>
+                  <span className="text-slate-100 font-medium">{elapsedTime(car.time_in, car.time_out)}</span>
+                </div>
+              </div>
+
+              {/* DESKTOP STATUS (Hidden on mobile, shown on tablet+) */}
+              <div className="hidden md:flex md:w-1/6 justify-center">
+                <span className={`badge ${getBadgeClass(car.status)}`}>
+                  <span className={`w-1.5 h-1.5 rounded-full ${getDotClass(car.status)}`}></span>
+                  {car.status}
+                </span>
+              </div>
+
+              {/* BOTTOM ROW (Mobile) / RIGHT COLUMN (Desktop): Fee */}
+              <div className="flex justify-between items-center md:w-1/6 md:justify-end border-t border-slate-700/50 md:border-t-0 pt-3 md:pt-0 mt-2 md:mt-0">
+                <span className="text-slate-400 text-xs uppercase tracking-widest font-semibold md:hidden">
+                  To Be Paid
+                </span>
+                <span className="font-mono font-bold text-green-400 text-2xl drop-shadow-[0_0_8px_rgba(74,222,128,0.2)]">
                   ₱{calculateFee(car.time_in, car.time_out)}
-                </td>
-              </tr>
-            ))
-          )}
-        </tbody>
-      </table>
+                </span>
+              </div>
+
+            </div>
+          ))
+        )}
+      </div>
+      
     </div>
   );
 }

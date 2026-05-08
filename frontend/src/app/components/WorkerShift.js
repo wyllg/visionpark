@@ -78,15 +78,19 @@ export default function WorkerShift({ onApprove }) {
   // ==========================================
   if (!activeShift) {
     return (
-      <div className="p-6 bg-white rounded-lg shadow-md max-w-md border-t-4 border-gray-300">
+      <div className="w-full max-w-6xl glass-panel mx-auto space-y-6">
+        
+      
+      <div className="p-6 rounded-lg shadow-md border-t-4 border-blue-600">
         <h2 className="text-xl font-bold mb-2">Gate is Unattended</h2>
-        <p className="text-gray-600 mb-6">You must clock in to start monitoring vehicles.</p>
+        <p className="text-gray-400 mb-6">You must clock in to start monitoring vehicles.</p>
         <button
           onClick={handleClockIn}
-          className="w-full bg-blue-600 text-white font-semibold px-4 py-3 rounded hover:bg-blue-700 transition"
+          className="max-w-6xl bg-blue-600 text-white font-semibold px-4 py-3 rounded hover:bg-blue-700 transition"
         >
           Clock In
         </button>
+      </div>
       </div>
     );
   }

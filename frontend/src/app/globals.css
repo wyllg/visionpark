@@ -1,72 +1,130 @@
 @import "tailwindcss"; /* Must be at the top! */
 
 :root {
-  /* Core Theme Colors */
-  --bg-primary: #ffffff;
-  --bg-secondary: #f3f4f6;
-  --text-primary: #111827;
-  --text-secondary: #4b5563;
+  /* Modern Dark Theme Variables */
+  --bg-primary: #0f172a; /* Slate 900 */
+  --bg-secondary: #1e293b; /* Slate 800 */
+  --text-primary: #f8fafc; /* Slate 50 */
+  --text-muted: #94a3b8; /* Slate 400 */
 
-  /* VisionPark Green Theme */
-  --vp-green-light: #d1fae5;
-  --vp-green-base: #10b981; /* Main Green */
-  --vp-green-dark: #047857;
-
-  /* Traffic Light UI System */
-  --traffic-red: #ef4444;    /* Stop / Exit / Error / Occupied */
-  --traffic-yellow: #f59e0b; /* Wait / Pending / Warning */
-  --traffic-green: #22c55e;  /* Go / Enter / Success / Available */
+  /* Vibrant Traffic Light System */
+  --traffic-red: #ef4444;
+  --traffic-yellow: #f59e0b;
+  --traffic-green: #10b981;
 }
 
 body {
   background-color: var(--bg-primary);
   color: var(--text-primary);
-  font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  /* Smooth scrolling and text rendering */
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-@layer components {
-  /* License Plate Title Styling */
-  .license-plate-title {
-    @apply inline-block px-4 py-2 font-bold text-center uppercase tracking-[0.2em];
-    font-family: "Courier New", Courier, monospace; /* Monospace for plate feel */
-    color: #111827;
-    background-color: #f8fafc;
-    border: 3px solid #1f2937;
-    border-radius: 8px;
-    box-shadow: 
-      inset 0 0 0 2px #e2e8f0, /* Inner subtle border */
-      0 4px 6px -1px rgba(0, 0, 0, 0.1); /* Outer drop shadow */
-    position: relative;
-  }
-
-  /* Optional: Little screw holes for the license plate */
-  .license-plate-title::before,
-  .license-plate-title::after {
-    content: '';
-    @apply absolute w-2 h-2 bg-gray-400 rounded-full;
-    top: 50%;
-    transform: translateY(-50%);
-  }
-  .license-plate-title::before { left: 8px; }
-  .license-plate-title::after { right: 8px; }
-
-  /* Interactive Traffic Light Buttons */
-  .btn-traffic-red {
-    @apply bg-red-500 hover:bg-red-600 text-white font-semibold py-2 px-4 rounded shadow transition-colors duration-200;
-  }
+/* -----------------------------------
+   PREMIUM LICENSE PLATE TITLE
+----------------------------------- */
+.license-plate-green {
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #f8fafc; /* Crisp white text */
   
-  .btn-traffic-yellow {
-    @apply bg-yellow-500 hover:bg-yellow-600 text-white font-semibold py-2 px-4 rounded shadow transition-colors duration-200;
-  }
+  /* Sleek dark glass background */
+  background: rgba(30, 41, 59, 0.6); 
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
   
-  .btn-traffic-green {
-    @apply bg-green-500 hover:bg-green-600 text-white font-semibold py-2 px-4 rounded shadow transition-colors duration-200;
-  }
+  /* Simple padding and subtle rounded corners */
+  padding: 0.5rem 1.25rem;
+  border-radius: 6px;
+  
+  /* Very subtle outer edge with a bright green accent on the left */
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-top: 4px solid #10b981; 
+  
+  /* Soft shadow to lift it slightly off the background */
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  
+  display: inline-flex;
+  align-items: center;
+}
 
-  /* Clean UI Cards */
-  .vp-card {
-    @apply bg-white border border-gray-200 rounded-xl shadow-sm p-6;
-  }
+.license-plate-red {
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #f8fafc; /* Crisp white text */
+  
+  /* Sleek dark glass background */
+  background: rgba(30, 41, 59, 0.6); 
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  
+  /* Simple padding and subtle rounded corners */
+  padding: 0.5rem 1.25rem;
+  border-radius: 6px;
+  
+  /* Very subtle outer edge with a bright green accent on the left */
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-top: 4px solid #ef4444; 
+  
+  /* Soft shadow to lift it slightly off the background */
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  
+  display: inline-flex;
+  align-items: center;
+}
+
+/* -----------------------------------
+   GLASSMORPHISM UTILITIES
+----------------------------------- */
+.glass-panel {
+  background: rgba(30, 41, 59, 0.65);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+  border-radius: 1rem;
+}
+
+/* -----------------------------------
+   STATUS BADGES (Glowing)
+----------------------------------- */
+.badge {
+  @apply px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider border flex items-center gap-2 w-max;
+}
+.badge-active {
+  background: rgba(16, 185, 129, 0.15);
+  color: #34d399;
+  border-color: rgba(16, 185, 129, 0.4);
+  box-shadow: 0 0 10px rgba(16, 185, 129, 0.2);
+}
+.badge-pending {
+  background: rgba(245, 158, 11, 0.15);
+  color: #fbbf24;
+  border-color: rgba(245, 158, 11, 0.4);
+  box-shadow: 0 0 10px rgba(245, 158, 11, 0.2);
+}
+.badge-exited {
+  background: rgba(239, 68, 68, 0.15);
+  color: #f87171;
+  border-color: rgba(239, 68, 68, 0.4);
+  box-shadow: 0 0 10px rgba(239, 68, 68, 0.2);
+}
+
+/* Custom Scrollbar for Tables */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: var(--bg-primary); 
+}
+::-webkit-scrollbar-thumb {
+  background: #475569; 
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #64748b; 
 }

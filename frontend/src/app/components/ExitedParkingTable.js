@@ -45,43 +45,73 @@ export default function ExitedParkingTable({ refreshTrigger }) {
   if (isLoading) return <div className="p-8 text-center animate-pulse">Loading Archive...</div>;
 
   return (
-    <div className="bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden">
-      <div className="p-4 bg-gray-50 border-b border-gray-200 flex justify-between items-center">
-        <h2 className="text-lg font-bold text-gray-800">PARKING HISTORY (EXITED)</h2>
+    <div className="w-full max-w-6xl mx-auto space-y-4">
+      
+      {/* HEADER SECTION */}
+      <div className="w-full flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-2 pt-7">
+        <h2 className="license-plate-red text-xl sm:text-xl w-full justify-center">
+          EXITED PARKING
+        </h2>
       </div>
 
-      <table className="w-full text-left border-collapse">
-        <thead className="bg-gray-100 text-gray-600 text-sm uppercase">
-          <tr>
-            <th className="p-4 font-semibold">License</th>
-            <th className="p-4 font-semibold">Time In</th>
-            <th className="p-4 font-semibold">Time Out</th>
-            <th className="p-4 font-semibold">Total Time</th>
-            <th className="p-4 font-semibold text-right">Amount Paid (PHP)</th>
-          </tr>
-        </thead>
-        <tbody className="divide-y divide-gray-100 text-sm">
-          {vehicles.length === 0 ? (
-            <tr>
-              <td colSpan="5" className="p-8 text-center text-gray-500">No cars have exited yet.</td>
-            </tr>
-          ) : (
-            vehicles.map((car, idx) => (
-              <tr key={idx} className="hover:bg-gray-50 transition-colors">
-                <td className="p-4 font-bold text-gray-800">{car.plate_number}</td>
-                <td className="p-4 text-gray-600">{new Date(car.time_in).toLocaleTimeString()}</td>
-                {/* Now displaying the exact checkout time */}
-                <td className="p-4 text-gray-600">{new Date(car.time_out).toLocaleTimeString()}</td>
-                <td className="p-4 text-gray-600 font-medium">{elapsedTime(car.time_in, car.time_out)}</td>
-                <td className="p-4 text-right font-mono font-bold text-green-700 text-lg">
-                  {/* Using the pre-calculated total_fee directly from Supabase! */}
+      {/* RESPONSIVE DATA CONTAINER (Replaces the Table) */}
+      <div className="space-y-4">
+        {vehicles.length === 0 ? (
+          <div className="glass-panel p-8 text-center text-slate-400 italic">
+            No cars have exited yet.
+          </div>
+        ) : (
+          vehicles.map((car, idx) => (
+            <div 
+              key={idx} 
+              className="glass-panel p-4 flex flex-col md:flex-row md:items-center justify-between gap-4 hover:bg-slate-800/40 transition-colors border-l-4 border-l-slate-500"
+            >
+              
+              {/* TOP ROW (Mobile) / LEFT COLUMN (Desktop): Plate */}
+              <div className="flex justify-between items-center md:w-1/5">
+                <div className="font-mono text-xl sm:text-2xl font-bold text-white bg-slate-900 px-3 py-1 rounded border border-slate-700 shadow-inner tracking-wider">
+                  {car.plate_number}
+                </div>
+              </div>
+
+              {/* MIDDLE ROW (Mobile) / MIDDLE COLUMNS (Desktop): Time Tracking Grid */}
+              <div className="grid grid-cols-2 gap-4 text-sm md:flex md:w-3/5 md:justify-around bg-slate-900/30 p-3 rounded-lg md:bg-transparent md:p-0">
+                <div className="flex flex-col">
+                  <span className="text-slate-500 text-xs uppercase tracking-widest font-semibold mb-1">Time In</span>
+                  <span className="text-slate-200 font-medium">
+                    {new Date(car.time_in).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                  </span>
+                </div>
+                
+                <div className="flex flex-col">
+                  <span className="text-slate-500 text-xs uppercase tracking-widest font-semibold mb-1">Time Out</span>
+                  <span className="text-slate-200 font-medium">
+                    {new Date(car.time_out).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                  </span>
+                </div>
+
+                {/* Spans 2 columns on tiny phones, 1 on larger screens */}
+                <div className="flex flex-col col-span-2 sm:col-span-1 border-t border-slate-700/50 pt-2 sm:border-0 sm:pt-0">
+                  <span className="text-slate-500 text-xs uppercase tracking-widest font-semibold mb-1">Total Time</span>
+                  <span className="text-slate-300 font-medium">{elapsedTime(car.time_in, car.time_out)}</span>
+                </div>
+              </div>
+
+              {/* BOTTOM ROW (Mobile) / RIGHT COLUMN (Desktop): Paid Amount */}
+              <div className="flex justify-between items-center md:w-1/5 md:justify-end border-t border-slate-700/50 md:border-t-0 pt-3 md:pt-0 mt-2 md:mt-0">
+                <span className="text-slate-500 text-xs uppercase tracking-widest font-semibold md:hidden">
+                  Amount Paid
+                </span>
+                <span className="font-mono font-bold text-red-500 text-2xl drop-shadow-[0_0_8px_rgba(255,255,255,0.05)]">
                   ₱{car.total_fee?.toFixed(2) || '0.00'}
-                </td>
-              </tr>
-            ))
-          )}
-        </tbody>
-      </table>
+                </span>
+              </div>
+
+            </div>
+          ))
+        )}
+      </div>
+      
     </div>
   );
 }

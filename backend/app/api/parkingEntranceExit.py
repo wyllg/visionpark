@@ -113,7 +113,7 @@ def approve_exit(data: ExitApprovalData):
         # 3. Calculate Total Fee (Example: Standard PH Mall Rate)
         # Flat rate of 40 PHP for the first 3 hours, then 10 PHP per succeeding hour
         if hours_parked <= 3:
-            total_fee = 40.00
+            total_fee = 30.00
         else:
             # math.ceil rounds up (e.g., 3.1 hours becomes 4 hours of charging)
             total_hours = max(1, math.ceil(hours_parked))
