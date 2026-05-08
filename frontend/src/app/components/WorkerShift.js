@@ -2,6 +2,7 @@
 import { useState, useEffect } from "react";
 import { useUser } from "@clerk/nextjs";
 import EntranceApproval from './EntranceApproval';
+import ExitApproval from './ExitApproval';
 
 export default function WorkerShift({ onApprove }) {
   const { user, isLoaded } = useUser();
@@ -115,6 +116,7 @@ export default function WorkerShift({ onApprove }) {
         */}
         <div>
           <EntranceApproval onApprove={onApprove}/>
+          <ExitApproval onApprove={onApprove}/>
         </div>
       </div>
     );

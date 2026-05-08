@@ -1,53 +1,57 @@
 'use client';
 import { useState, useEffect, useRef } from 'react';
-
+import { useUser } from '@clerk/nextjs';
 
 export default function EntranceApproval({ onApprove }) {
   const [pendingCars, setPendingCars] = useState([]);
-  const localEdits = useRef({}); // { [id]: plate_number }
+  const localEdits = useRef({}); // Prevents polling from overwriting typing
+  const { user } = useUser();
 
   useEffect(() => {
     const fetchPending = async () => {
       try {
-        const res = await fetch('http://localhost:8000/api/parking/pending');
+        const res = await fetch('http://localhost:8000/api/parking/pending/entrance');
         const json = await res.json();
 
         if (json.status === 'success') {
           setPendingCars(
             json.data.map(dbCar => ({
               ...dbCar,
-              // Use the worker's local edit if it exists, otherwise use DB value
-              original_plate_read: localEdits.current[dbCar.id] ?? dbCar.original_plate_read,
+              raw_plate_read: localEdits.current[dbCar.id] ?? dbCar.raw_plate_number,
             }))
           );
         }
       } catch (error) {
-        console.error("Failed to fetch pending cars:", error);
+        console.error("Failed to fetch pending entrances:", error);
       }
     };
 
     fetchPending();
-    const interval = setInterval(fetchPending, 1000); // TEMPORARY FETCHING TIME WILL CHANGE LATER
+    const interval = setInterval(fetchPending, 3000); 
     return () => clearInterval(interval);
   }, []);
 
   const handleApprove = async (id, currentPlate) => {
-
     const uppercasePlate = (currentPlate || "").toUpperCase();
 
     try {
-      const res = await fetch('http://localhost:8000/api/parking/approve', {
-        method: 'PUT',
+      const res = await fetch('http://localhost:8000/api/parking/approve/entrance', {
+        method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ id, license_plate: uppercasePlate }),
+        body: JSON.stringify({ 
+          id, 
+          plate_number: uppercasePlate, 
+          worker_id: user.fullName || user.firstName
+        }),
       });
 
       const result = await res.json();
       if (result.status === 'success') {
-        delete localEdits.current[id]; // Clean up the saved edit
+        delete localEdits.current[id]; 
         setPendingCars(prev => prev.filter(car => car.id !== id));
-
-        if (onApprove) onApprove();
+        if (onApprove) onApprove(); // Refreshes the Active Parking table!
+      } else {
+        alert(`Failed: ${result.message}`);
       }
     } catch (error) {
       console.error("Approval failed", error);
@@ -55,46 +59,40 @@ export default function EntranceApproval({ onApprove }) {
   };
 
   const handleInputChange = (id, newText) => {
-    localEdits.current[id] = newText; // Save to ref so it survives the 5s polling
-    setPendingCars(prevCars => 
-      prevCars.map(car => 
-        car.id === id ? { ...car, original_plate_read: newText } : car
-      )
-    );
+    localEdits.current[id] = newText;
+    setPendingCars(prev => prev.map(car => car.id === id ? { ...car, raw_plate_read: newText } : car));
   };
 
   return (
-    <div className="p-6 bg-green-50 rounded-xl">
-      <h2 className="text-xl font-bold text-green-800 mb-4">Action Required: Approve Arrivals</h2>
+    <div className="p-4 bg-blue-50 rounded-xl shadow-sm border border-blue-100">
+      <h2 className="text-lg font-bold text-blue-800 mb-3 flex items-center gap-2">
+        📥 Arriving Cars
+      </h2>
       
       {pendingCars.length === 0 ? (
-        <p className="text-gray-500">No new cars waiting for approval.</p>
+        <p className="text-gray-500 text-sm">No pending arrivals.</p>
       ) : (
-        <div className="space-y-4">
+        <div className="space-y-3">
           {pendingCars.map(car => (
-            <div key={car.id} className="bg-white p-4 rounded shadow flex items-center justify-between border-l-4 border-yellow-400">
-              
+            <div key={car.id} className="bg-white p-3 rounded border-l-4 border-blue-400 shadow-sm flex items-center justify-between">
               <div>
-                <p className="text-sm text-gray-500">Arrived at: {new Date(car.time_in).toLocaleTimeString()}</p>
+                <p className="text-xs text-gray-400">Time: {new Date(car.detection_time).toLocaleTimeString()}</p>
                 <div className="flex items-center gap-2 mt-1">
-                  <span className="font-bold text-gray-700">AI Guess:</span>
-                  {/* The editable text box! */}
+                  <span className="text-sm font-semibold text-gray-600">Plate:</span>
                   <input
                     type="text"
-                    value={car.original_plate_read}
+                    value={car.raw_plate_read}
                     onChange={(e) => handleInputChange(car.id, e.target.value)}
-                    className="uppercase border font-bold border-gray-300 rounded px-2 py-1 text-gray-700 focus:outline-none focus:border-yellow-500"
+                    className="uppercase border-2 font-bold border-gray-200 rounded px-2 py-1 text-gray-800 focus:outline-none focus:border-blue-500 w-32"
                   />
                 </div>
               </div>
-
               <button 
-                onClick={() => handleApprove(car.id, car.original_plate_read)}
-                className="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-6 rounded shadow"
+                onClick={() => handleApprove(car.id, car.raw_plate_read)}
+                className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded text-sm transition"
               >
-                Approve & Publish
+                Approve Arrival
               </button>
-
             </div>
           ))}
         </div>

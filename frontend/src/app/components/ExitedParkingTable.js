@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 
-export default function ExitedParkingTable() {
+export default function ExitedParkingTable({ refreshTrigger }) {
   const [vehicles, setVehicles] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -24,9 +24,8 @@ export default function ExitedParkingTable() {
     };
     
     fetchParkingData();
-    const dbInterval = setInterval(fetchParkingData, 100000);
-    return () => clearInterval(dbInterval);
-  }, []);
+
+  }, [refreshTrigger]);
 
   // 2. A simplified Elapsed Time calculator (No live clock needed!)
   const elapsedTime = (timeIn, timeOut) => {

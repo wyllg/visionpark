@@ -8,12 +8,12 @@ from dotenv import load_dotenv
 
 # 1. Import your feature routes here
 # (Assuming you saved the live parking status code in backend/app/api/public_parking.py)
-from app.api import active_status
-from app.api import exited_parking
-from app.api import pending_status
-from app.api import entry_parking
-from app.api import worker_status
-from app.api import worker_shift
+from app.api import statusActive
+from app.api import statusExited
+from app.api import statusPending
+from app.api import parkingEntranceExit
+from app.api import workerStatus
+from app.api import workerShift
 
 
 # 2. Load Environment Variables from your .env.local file
@@ -44,12 +44,12 @@ app.add_middleware(
 
 # 5. Connect your Feature Routers
 # This tells FastAPI: "If a request comes in for /api/parking/live-status, use the code in public_parking.py"
-app.include_router(active_status.router)
-app.include_router(exited_parking.router)
-app.include_router(entry_parking.router)
-app.include_router(pending_status.router)
-app.include_router(worker_status.router)
-app.include_router(worker_shift.router)
+app.include_router(statusActive.router)
+app.include_router(statusExited.router)
+app.include_router(parkingEntranceExit.router)
+app.include_router(statusPending.router)
+app.include_router(workerStatus.router)
+app.include_router(workerShift.router)
 
 
 # Optional: Add any future routes here as you build them!

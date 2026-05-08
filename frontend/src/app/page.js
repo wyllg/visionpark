@@ -5,9 +5,7 @@ import { useState } from 'react';
 import Link from 'next/link';
 import ActiveParkingTable from './components/ActiveParkingTable';
 import ExitedParkingTable from './components/ExitedParkingTable';
-import EntranceApproval from './components/EntranceApproval';
 import WorkerShift from './components/WorkerShift';
-// import ExitApproval from './components/ExitApproval';
 import Profile from './components/Profile';
 import Hero from './components/Hero';
 
@@ -21,6 +19,7 @@ export default function YourComponent() {
   const handleCarApproved = () => {
     setRefreshTrigger(prev => prev + 1);
   }
+  
 
   // Error Handling and Loading Component
   if (!isAuthLoaded || !isUserLoaded) {
@@ -75,7 +74,7 @@ export default function YourComponent() {
 
       {/* ANYONE CAN VIEW */}
       <ActiveParkingTable refreshTrigger={refreshTrigger} />
-      <ExitedParkingTable />
+      <ExitedParkingTable refreshTrigger={refreshTrigger} />
     </div>
   );
 }
