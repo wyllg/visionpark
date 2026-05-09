@@ -11,7 +11,7 @@ export default function EntranceApproval({ onApprove }) {
   useEffect(() => {
     const fetchPending = async () => {
       try {
-        const res = await fetch('http://localhost:8000/api/parking/pending/entrance');
+        const res = await fetch('https://visionpark.vercel.app/api/parking/pending/entrance');
         const json = await res.json();
 
         if (json.status === 'success') {
@@ -36,7 +36,7 @@ export default function EntranceApproval({ onApprove }) {
     const uppercasePlate = (currentPlate || "").toUpperCase();
 
     try {
-      const res = await fetch('http://localhost:8000/api/parking/approve/entrance', {
+      const res = await fetch('https://visionpark.vercel.app/api/parking/approve/entrance', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ 

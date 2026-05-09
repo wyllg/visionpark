@@ -26,7 +26,7 @@ export default function ActiveParkingTable({ refreshTrigger }) {
   useEffect(() => {
     const fetchParkingData = async () => {
       try {
-        const res = await fetch('http://localhost:8000/api/parking/active');
+        const res = await fetch('https://visionpark.vercel.app/api/parking/active');
         const json = await res.json();
         if (json.status === 'success') {
           setVehicles(json.data);

@@ -11,7 +11,7 @@ export default function ExitApproval({ onApprove }) {
   useEffect(() => {
     const fetchPending = async () => {
       try {
-        const res = await fetch('http://localhost:8000/api/parking/pending/exit');
+        const res = await fetch('https://visionpark.vercel.app/api/parking/pending/exit');
         const json = await res.json();
 
         if (json.status === 'success') {
@@ -36,7 +36,7 @@ export default function ExitApproval({ onApprove }) {
     const uppercasePlate = (plateToApprove || "").toUpperCase();
 
     try {
-      const res = await fetch('http://localhost:8000/api/parking/approve/exit', {
+      const res = await fetch('https://visionpark.vercel.app/api/parking/approve/exit', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ 

@@ -12,7 +12,7 @@ export default function WorkerShift({ onApprove }) {
 
   const fetchActiveShift = async () => {
     try {
-      const res = await fetch("http://localhost:8000/api/worker/status/active");
+      const res = await fetch("https://visionpark.vercel.app/api/worker/status/active");
       const data = await res.json();
       
       if (data.status === "success" && data.data.length > 0) {
@@ -38,7 +38,7 @@ export default function WorkerShift({ onApprove }) {
     if (!user) return;
     setLoading(true);
     try {
-      await fetch("http://localhost:8000/api/worker/clock_in", {
+      await fetch("https://visionpark.vercel.app/api/worker/clock_in", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -57,7 +57,7 @@ export default function WorkerShift({ onApprove }) {
     if (!user) return;
     setLoading(true);
     try {
-      await fetch("http://localhost:8000/api/worker/clock_out", {
+      await fetch("https://visionpark.vercel.app/api/worker/clock_out", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
