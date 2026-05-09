@@ -2,7 +2,7 @@ import requests
 import time
 import random
 
-API_URL = "https://visionpark.vercel.app/api/parking/entry"
+API_URL = "/_/backend/api/parking/entry"
 
 SAMPLE_PLATES = [
   "XYZ-9876",

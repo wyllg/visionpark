@@ -12,7 +12,7 @@ export default function ExitedParkingTable({ refreshTrigger }) {
     const fetchParkingData = async () => {
       try {
         // Pointing to your exited endpoint
-        const res = await fetch('https://visionpark.vercel.app/api/parking/exited');
+        const res = await fetch('/_/backend/api/parking/exited');
         const json = await res.json();
         if (json.status === 'success') {
           setVehicles(json.data);

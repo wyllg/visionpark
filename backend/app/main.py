@@ -30,8 +30,9 @@ app = FastAPI(
 # 4. Configure CORS (Cross-Origin Resource Sharing)
 # THIS IS CRITICAL: Without this, your browser will block Next.js from talking to FastAPI!
 origins = [
-    "https://visionpark.vercel.app",  # Your local Next.js frontend
+    "http://localhost:3000",  # Your local Next.js frontend
     # You will add your actual production domain here later (e.g., "https://visionpark.vercel.app")
+    "https://visionpark.vercel.app",
 ]
 
 app.add_middleware(
