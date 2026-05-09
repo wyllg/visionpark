@@ -23,7 +23,7 @@ export default function RootLayout({ children }) {
         signInUrl="/auth/login"
         signUpUrl="/auth/signup"
         >
-          <Navbar /> 
+          <Navbar />
           {children}
         </ClerkProvider>
       </body>

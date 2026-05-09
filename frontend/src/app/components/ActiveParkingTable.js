@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { Activity } from 'lucide-react';
 
 export default function ActiveParkingTable({ refreshTrigger }) {
   const [vehicles, setVehicles] = useState([]);
@@ -91,80 +92,109 @@ export default function ActiveParkingTable({ refreshTrigger }) {
 
   if (isLoading) return <div className="p-8 text-center animate-pulse">Loading Live Status...</div>;
 
-  return (
-    <div className="w-full max-w-6xl mx-auto space-y-6">
-      
-      {/* HEADER SECTION */}
-      <div className="w-full flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-2 pt-7">
-        <h2 className="license-plate-green text-xl sm:text-xl w-full justify-center">
-          LIVE PARKING
-        </h2>
+return (
+  <div className="w-full pt-7">
+
+    {/* HEADER */}
+    <div className="w-full flex justify-between items-center pb-4 border-b border-moon/10 mb-4">
+      <h2 className="flex items-center gap-2.5 text-base sm:text-lg font-semibold text-moon">
+        <Activity className="w-4.5 h-4.5 text-mustard flex-shrink-0" />
+        Active Parking
+      </h2>
+      <span className="text-xs text-slate-400 bg-slate/10 border border-moon/10 rounded-md px-2.5 py-1">
+        {vehicles.length} cars
+      </span>
+    </div>
+
+    {/* DESKTOP COLUMN HEADERS — hidden on mobile */}
+    {vehicles.length > 0 && (
+      <div className="hidden md:grid grid-cols-[minmax(0,1.4fr)_minmax(0,1fr)_minmax(0,1fr)_minmax(0,0.8fr)_80px] gap-x-4 px-3.5 pb-2">
+        {["Plate", "Time in", "Elapsed", "Status"].map(h => (
+          <span key={h} className="text-[11px] font-semibold uppercase tracking-widest text-slate-400">{h}</span>
+        ))}
+        <span className="text-[11px] font-semibold uppercase tracking-widest text-slate-400 text-right">Fee</span>
       </div>
+    )}
 
-      {/* RESPONSIVE DATA CONTAINER (Replaces the Table) */}
-      <div className="space-y-4">
-        {vehicles.length === 0 ? (
-          <div className="glass-panel p-8 text-center text-slate-400 italic">
-            Lot is currently empty.
-          </div>
-        ) : (
-          vehicles.map((car, idx) => (
-            <div 
-              key={idx} 
-              className="glass-panel p-4 flex flex-col md:flex-row md:items-center justify-between gap-4 hover:bg-slate-800/40 transition-colors border-l-4 border-l-green-500"
-            >
-              
-              {/* TOP ROW (Mobile) / LEFT COLUMN (Desktop): Plate & Status */}
-              <div className="flex justify-between items-center md:w-1/4">
-                <div className="font-mono text-xl sm:text-2xl font-bold text-white bg-slate-900 px-3 py-1 rounded border border-slate-700 shadow-inner tracking-wider">
-                  {car.plate_number}
-                </div>
-                {/* Show status here only on mobile */}
-                <div className="md:hidden">
-                  <span className={`badge ${getBadgeClass(car.status)}`}>
-                    <span className={`w-1.5 h-1.5 rounded-full ${getDotClass(car.status)}`}></span>
-                    {car.status}
-                  </span>
-                </div>
+    {/* LIST */}
+    <div className="space-y-px">
+      {vehicles.length === 0 ? (
+        <div className="py-10 text-center text-slate-400 italic text-sm">
+          Lot is currently empty.
+        </div>
+      ) : (
+        vehicles.map((car, idx) => (
+          <div key={idx}>
+            {/* DESKTOP ROW */}
+            <div className="
+              hidden md:grid
+              grid-cols-[minmax(0,1.4fr)_minmax(0,1fr)_minmax(0,1fr)_minmax(0,0.8fr)_80px]
+              gap-x-4 items-center
+              px-3.5 py-2.5 rounded-lg
+              border border-transparent
+              hover:bg-slate/10 hover:border-moon/5
+              transition-colors group cursor-default
+            ">
+              <span className="font-mono text-sm font-bold text-moon tracking-wide">
+                {car.plate_number}
+              </span>
+              <span className="text-sm text-moon">
+                {new Date(car.time_in).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+              </span>
+              <span className="text-sm font-medium text-moon">
+                {elapsedTime(car.time_in, car.time_out)}
+              </span>
+              <span>
+                <span className={`${getBadgeClass(car.status)}`}>
+                  {car.status}
+                </span>
+              </span>
+              <span className="text-sm font-bold text-go text-right">
+                ₱{calculateFee(car.time_in, car.time_out)}
+              </span>
+            </div>
+
+            {/* MOBILE ROW — 2-col grid, stacked info */}
+            <div className="
+              md:hidden grid grid-cols-[1fr_auto] gap-x-3 items-start
+              px-3 py-3 rounded-lg
+              border border-transparent
+              hover:bg-slate/10 hover:border-moon/5
+              transition-colors
+            ">
+              {/* col 1 top: plate */}
+              <span className="font-mono text-base font-bold text-moon tracking-wide">
+                {car.plate_number}
+              </span>
+              {/* col 2 top: fee */}
+              <span className="text-sm font-bold text-go text-right">
+                ₱{calculateFee(car.time_in, car.time_out)}
+              </span>
+              {/* col 1 bottom: time · elapsed */}
+              <div className="flex items-center gap-2 mt-3">
+                <span className="text-xs text-moon/80">
+                  In: {new Date(car.time_in).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                </span>
+                <span className="text-ocean text-xs">·</span>
+                <span className="text-xs text-moon/80">
+                  Elapsed: {elapsedTime(car.time_in, car.time_out)}
+                </span>
               </div>
-
-              {/* MIDDLE ROW (Mobile) / MIDDLE COLUMNS (Desktop): Time Tracking */}
-              <div className="flex flex-row justify-between text-sm md:w-2/4 md:justify-center md:gap-12 bg-slate-900/30 p-3 rounded-lg md:bg-transparent md:p-0">
-                <div className="flex flex-col">
-                  <span className="text-slate-400 text-xs uppercase tracking-widest font-semibold mb-1">Time In</span>
-                  <span className="text-slate-100 font-medium">
-                    {new Date(car.time_in).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                  </span>
-                </div>
-                <div className="flex flex-col">
-                  <span className="text-slate-400 text-xs uppercase tracking-widest font-semibold mb-1">Duration</span>
-                  <span className="text-slate-100 font-medium">{elapsedTime(car.time_in, car.time_out)}</span>
-                </div>
-              </div>
-
-              {/* DESKTOP STATUS (Hidden on mobile, shown on tablet+) */}
-              <div className="hidden md:flex md:w-1/6 justify-center">
-                <span className={`badge ${getBadgeClass(car.status)}`}>
-                  <span className={`w-1.5 h-1.5 rounded-full ${getDotClass(car.status)}`}></span>
+              {/* col 2 bottom: status badge */}
+              <div className="flex justify-end mt-1">
+                <span className={`badge text-xs px-2 py-0.5 ${getBadgeClass(car.status)}`}>
                   {car.status}
                 </span>
               </div>
-
-              {/* BOTTOM ROW (Mobile) / RIGHT COLUMN (Desktop): Fee */}
-              <div className="flex justify-between items-center md:w-1/6 md:justify-end border-t border-slate-700/50 md:border-t-0 pt-3 md:pt-0 mt-2 md:mt-0">
-                <span className="text-slate-400 text-xs uppercase tracking-widest font-semibold md:hidden">
-                  To Be Paid
-                </span>
-                <span className="font-mono font-bold text-green-400 text-2xl drop-shadow-[0_0_8px_rgba(74,222,128,0.2)]">
-                  ₱{calculateFee(car.time_in, car.time_out)}
-                </span>
-              </div>
-
             </div>
-          ))
-        )}
-      </div>
-      
+
+            {idx < vehicles.length - 1 && (
+              <div className="h-px bg-moon/5 mx-3" />
+            )}
+          </div>
+        ))
+      )}
     </div>
-  );
+  </div>
+);
 }

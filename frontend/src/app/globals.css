@@ -1,104 +1,135 @@
-@import "tailwindcss"; /* Must be at the top! */
+@import url('https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400;1,700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Sacramento&display=swap');
 
-:root {
+@font-face{
+  font-family: Syne;
+  src: url('/fonts/Syne.otf') format('opentype');
+}
+
+
+@import "tailwindcss";
+
+@theme {
+
+  --font-mono: "Space Mono", monospace;
+  --font-cursive: "Sacramento", serif;
+
   /* Modern Dark Theme Variables */
-  --bg-primary: #0f172a; /* Slate 900 */
-  --bg-secondary: #1e293b; /* Slate 800 */
-  --text-primary: #f8fafc; /* Slate 50 */
-  --text-muted: #94a3b8; /* Slate 400 */
+  --color-vinyl: #191b08;
+  --color-vinyl-light: #7e8828;
+  --color-vinyl-dark: #111205;
 
-  /* Vibrant Traffic Light System */
-  --traffic-red: #ef4444;
-  --traffic-yellow: #f59e0b;
-  --traffic-green: #10b981;
+  /* SLATE - Industrial Gray */
+  --color-slate: #292b2b;
+  --color-slate-light: #676c6c;
+  --color-slate-dark: #1c1e1e;
+
+  /* MUSTARD - Action/Warning Orange */
+  --color-mustard: #e5873b;
+  --color-mustard-light: #ecab75;
+  --color-mustard-dark: #b15c17;
+
+  /* OCEAN - Professional Teal */
+  --color-ocean: #3e787b;
+  --color-ocean-light: #67afb2;
+  --color-ocean-dark: #2b5356;
+
+  /* CHERRY - Error/Alert Red */
+  --color-cherry: #e45b3d;
+  --color-cherry-light: #ec8c77;
+  --color-cherry-dark: #b13418;
+
+  /* MOON - Off-White/Background */
+  --color-moon: #eceed5;
+  --color-moon-light: #f1f3e1;
+  --color-moon-dark: #cccdcf;
+
+  --color-go: #34d399;
+
+  --text-primary: #f8fafc;
+  --text-muted: #94a3b8;
+
+  
+
 }
 
 body {
-  background-color: var(--bg-primary);
-  color: var(--text-primary);
-  /* Smooth scrolling and text rendering */
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+  margin: 0;
+  min-height: 100vh;
+  background-color: var(--color-vinyl);
+  color: var(--color-moon);
+  font-family: 'Syne', sans-serif;
+
+  background-image: 
+    radial-gradient(at 90% 30%, var(--color-slate) 0px, transparent 45%),
+    radial-gradient(at 50% 50%, var(--color-slate) 0px, transparent 75%),
+    radial-gradient(at 10% 25%, var(--color-ocean) 0px, transparent 45%),
+    radial-gradient(at 80% 5%, var(--color-cherry) 0px, transparent 35%),
+    radial-gradient(at 50% 30%, var(--color-mustard) 0px, transparent 40%);
+
+  background-attachment: fixed;
+  background-size: cover;
+  position: relative;
+  overflow-x: hidden;
 }
 
-/* -----------------------------------
-   PREMIUM LICENSE PLATE TITLE
------------------------------------ */
-.license-plate-green {
-  font-weight: 600;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  color: #f8fafc; /* Crisp white text */
-  
-  /* Sleek dark glass background */
-  background: rgba(30, 41, 59, 0.6); 
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-  
-  /* Simple padding and subtle rounded corners */
-  padding: 0.5rem 1.25rem;
-  border-radius: 6px;
-  
-  /* Very subtle outer edge with a bright green accent on the left */
-  border: 1px solid rgba(255, 255, 255, 0.05);
-  border-top: 4px solid #10b981; 
-  
-  /* Soft shadow to lift it slightly off the background */
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-  
-  display: inline-flex;
-  align-items: center;
+body::before {
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: url("/svg/noise.svg"); /* adjust path to where you serve the file */
+  background-repeat: repeat;
+  background-size: 700px 700px; /* matches the SVG's native size for sharpest render */
+  opacity: 0.9;
+  pointer-events: none;
+  z-index: -1;
 }
 
-.license-plate-red {
-  font-weight: 600;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  color: #f8fafc; /* Crisp white text */
+.glass-card {
+  width: 100%;
+  height: 100%;
+  background-color: color-mix(in srgb, var(--color-slate), transparent 50%);
+  border: 1px solid rgba(243, 244, 246, 0.1); /* Subtle gray-100 border */
+  border-radius: 0.375rem; /* rounded-md */
   
-  /* Sleek dark glass background */
-  background: rgba(30, 41, 59, 0.6); 
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-  
-  /* Simple padding and subtle rounded corners */
-  padding: 0.5rem 1.25rem;
-  border-radius: 6px;
-  
-  /* Very subtle outer edge with a bright green accent on the left */
-  border: 1px solid rgba(255, 255, 255, 0.05);
-  border-top: 4px solid #ef4444; 
-  
-  /* Soft shadow to lift it slightly off the background */
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-  
-  display: inline-flex;
-  align-items: center;
-}
-
-/* -----------------------------------
-   GLASSMORPHISM UTILITIES
------------------------------------ */
-.glass-panel {
-  background: rgba(30, 41, 59, 0.65);
+  /* The Glass Effect */
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
-  border-radius: 1rem;
+  background-clip: padding-box;
 }
+
+@layer utilities {
+  /* Background Gradient */
+  .gradient-oceancherry {
+    background: linear-gradient(
+      to right, 
+      var(--color-ocean), 
+      var(--color-cherry)
+    );
+    }
+
+  .gradient-mustardocean {
+    background: linear-gradient(
+      to right, 
+      var(--color-mustard), 
+      var(--color-ocean)
+    );
+  }
+}
+
 
 /* -----------------------------------
    STATUS BADGES (Glowing)
 ----------------------------------- */
 .badge {
-  @apply px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider border flex items-center gap-2 w-max;
+  @apply px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider border flex items-center w-max;
 }
 .badge-active {
-  background: rgba(16, 185, 129, 0.15);
+
   color: #34d399;
-  border-color: rgba(16, 185, 129, 0.4);
-  box-shadow: 0 0 10px rgba(16, 185, 129, 0.2);
 }
 .badge-pending {
   background: rgba(245, 158, 11, 0.15);
@@ -111,20 +142,4 @@ body {
   color: #f87171;
   border-color: rgba(239, 68, 68, 0.4);
   box-shadow: 0 0 10px rgba(239, 68, 68, 0.2);
-}
-
-/* Custom Scrollbar for Tables */
-::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
-}
-::-webkit-scrollbar-track {
-  background: var(--bg-primary); 
-}
-::-webkit-scrollbar-thumb {
-  background: #475569; 
-  border-radius: 4px;
-}
-::-webkit-scrollbar-thumb:hover {
-  background: #64748b; 
 }

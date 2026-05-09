@@ -1,6 +1,7 @@
 'use client';
 import { useState, useEffect, useRef } from 'react';
 import { useUser } from '@clerk/nextjs';
+import { LogOut } from 'lucide-react';
 
 export default function ExitApproval({ onApprove }) {
   const [pendingCars, setPendingCars] = useState([]);
@@ -64,28 +65,28 @@ export default function ExitApproval({ onApprove }) {
   };
 
   return (
-    <div className="p-4 bg-orange-50 rounded-xl shadow-sm border border-orange-100">
-      <h2 className="text-lg font-bold text-orange-800 mb-3 flex items-center gap-2">
-        📤 Exiting Cars
+    <div className="p-4 bg-cherry/20 rounded-xl shadow-sm border border-cherry/70">
+      <h2 className="text-lg font-bold text-cherry-light mb-3 flex items-center gap-2">
+        <LogOut className="w-4.5 h-4.5 text-cherry-light flex-shrink-0"/> Exiting Cars
       </h2>
       
       {pendingCars.length === 0 ? (
-        <p className="text-gray-500 text-sm">No pending exits.</p>
+        <p className="text-slate-300 text-sm">No pending exits.</p>
       ) : (
         <div className="space-y-3">
           {pendingCars.map(car => (
-            <div key={car.id} className="bg-white p-3 rounded border-l-4 border-orange-400 shadow flex flex-col gap-3">
+            <div key={car.id} className="bg-cherry/20 p-3 rounded border-l-4 border-cherry-dark/60 shadow flex flex-col gap-3">
               
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-xs text-gray-400">Time: {new Date(car.detection_time).toLocaleTimeString()}</p>
+                  <p className="text-xs text-moon-dark">Time: {new Date(car.detection_time).toLocaleTimeString()}</p>
                   <div className="flex items-center gap-2 mt-1">
-                     <span className="text-sm font-semibold text-gray-600">AI Read:</span>
+                     <span className="text-sm font-semibold text-moon-dark">Plate:</span>
                      <input
                       type="text"
                       value={car.raw_plate_number}
                       onChange={(e) => handleInputChange(car.id, e.target.value)}
-                      className="uppercase border-2 font-bold border-gray-200 rounded px-2 py-1 text-gray-800 focus:outline-none focus:border-orange-500 w-32"
+                      className="uppercase border-2 font-bold border-cherry-dark/70 rounded px-2 py-1 text-moon focus:outline-none focus:border-orange-500 w-32"
                     />
                   </div>
                 </div>
@@ -93,21 +94,11 @@ export default function ExitApproval({ onApprove }) {
                 {/* Manual Checkout Button */}
                 <button 
                   onClick={() => handleApprove(car.id, car.raw_plate_read)}
-                  className="bg-gray-200 hover:bg-gray-300 text-gray-700 font-bold py-2 px-4 rounded text-sm transition"
+                  className="bg-cherry hover:bg-cherry-dark text-moon font-bold py-2 px-4 rounded text-sm transition"
                 >
-                  Manual Checkout
+                  Approve Exit
                 </button>
               </div>
-
-              {/* THE MAGIC QUICK CHECKOUT UI (Triggered if Fuzzy Match was 55% - 84%) */}
-              {car.suggested_match && (
-                <button 
-                  onClick={() => handleApprove(car.id, car.suggested_match)}
-                  className="w-full bg-green-500 hover:bg-green-600 text-white font-bold py-3 px-4 rounded flex items-center justify-center gap-2 transition animate-pulse"
-                >
-                  <span>🎯</span> Quick Checkout: {car.suggested_match}
-                </button>
-              )}
 
             </div>
           ))}

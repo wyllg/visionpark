@@ -6,7 +6,6 @@ import Link from 'next/link';
 import ActiveParkingTable from './components/ActiveParkingTable';
 import ExitedParkingTable from './components/ExitedParkingTable';
 import WorkerShift from './components/WorkerShift';
-import Profile from './components/Profile';
 import Hero from './components/Hero';
 
 export default function YourComponent() {
@@ -24,8 +23,8 @@ export default function YourComponent() {
   // Error Handling and Loading Component
   if (!isAuthLoaded || !isUserLoaded) {
     return (
-      <div className="flex min-h-[50vh] items-center justify-center p-8">
-        <div className="text-lg font-medium text-purple-700 animate-pulse">
+      <div className="flex min-h-screen items-center justify-center p-8">
+        <div className="text-xl font-medium text-mustard animate-pulse">
           Loading VisionPark
         </div>
       </div>
@@ -40,9 +39,6 @@ export default function YourComponent() {
       {/* IF LOGGED IN */}
       {userId && (
         <>
-          <div>
-            <Profile />
-          </div>
 
           {/* IF ADMIN */}
           {orgName === 'admin' && (
@@ -60,21 +56,25 @@ export default function YourComponent() {
 
           {/* IF WORKER */}
           {orgName === 'worker' && (
-            <>
-              <div className="p-4 rounded-lg shadow-md border border-blue-200 bg-blue-50 text-blue-800">
-                <h2 className="font-bold text-lg">WORKER VIEW</h2>
-              </div>
+            <div className='w-full max-w-6xl mx-auto space-y-6 rounded-3xl pb-5'>
               <WorkerShift onApprove={handleCarApproved} />
-              {/* <EntranceApproval onApprove={handleCarApproved}/> */}
-              {/* <ExitApproval /> */}
-            </>
+            </div>
           )}
         </>
       )}
 
       {/* ANYONE CAN VIEW */}
-      <ActiveParkingTable refreshTrigger={refreshTrigger} />
-      <ExitedParkingTable refreshTrigger={refreshTrigger} />
+      <div className='flex flex-col space-y-4'>
+        <div className='w-full max-w-6xl mx-auto space-y-6 rounded-3xl pb-5'>
+          <ActiveParkingTable refreshTrigger={refreshTrigger} />
+        </div>
+        <div className='w-full max-w-6xl mx-auto space-y-6 rounded-3xl pb-5'>
+          <ExitedParkingTable refreshTrigger={refreshTrigger} />
+        </div>
+      </div>
+
+      
+
     </div>
   );
 }

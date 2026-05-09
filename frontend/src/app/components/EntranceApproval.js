@@ -1,6 +1,7 @@
 'use client';
 import { useState, useEffect, useRef } from 'react';
 import { useUser } from '@clerk/nextjs';
+import { LogIn, LogInIcon } from 'lucide-react';
 
 export default function EntranceApproval({ onApprove }) {
   const [pendingCars, setPendingCars] = useState([]);
@@ -64,32 +65,32 @@ export default function EntranceApproval({ onApprove }) {
   };
 
   return (
-    <div className="p-4 bg-blue-50 rounded-xl shadow-sm border border-blue-100">
-      <h2 className="text-lg font-bold text-blue-800 mb-3 flex items-center gap-2">
-        📥 Arriving Cars
+    <div className="p-4 bg-ocean/30 rounded-xl shadow-sm border border-ocean">
+      <h2 className="text-lg font-bold text-ocean-light mb-3 flex items-center gap-2">
+        <LogIn className="w-4.5 h-4.5 text-ocean-light flex-shrink-0"/> Arriving Cars
       </h2>
       
       {pendingCars.length === 0 ? (
-        <p className="text-gray-500 text-sm">No pending arrivals.</p>
+        <p className="text-slate-300 text-sm">No pending arrivals.</p>
       ) : (
         <div className="space-y-3">
           {pendingCars.map(car => (
-            <div key={car.id} className="bg-white p-3 rounded border-l-4 border-blue-400 shadow-sm flex items-center justify-between">
+            <div key={car.id} className="bg-ocean/50 p-3 rounded border-l-4 border-ocean-dark shadow-sm flex items-center justify-between">
               <div>
-                <p className="text-xs text-gray-400">Time: {new Date(car.detection_time).toLocaleTimeString()}</p>
+                <p className="text-xs text-moon-dark">Time: {new Date(car.detection_time).toLocaleTimeString()}</p>
                 <div className="flex items-center gap-2 mt-1">
-                  <span className="text-sm font-semibold text-gray-600">Plate:</span>
+                  <span className="text-sm font-semibold text-moon-dark">Plate:</span>
                   <input
                     type="text"
                     value={car.raw_plate_read}
                     onChange={(e) => handleInputChange(car.id, e.target.value)}
-                    className="uppercase border-2 font-bold border-gray-200 rounded px-2 py-1 text-gray-800 focus:outline-none focus:border-blue-500 w-32"
+                    className="uppercase border-2 font-bold border-ocean-dark rounded px-2 py-1 text-moon-light focus:outline-none focus:border-blue-500 w-32"
                   />
                 </div>
               </div>
               <button 
                 onClick={() => handleApprove(car.id, car.raw_plate_read)}
-                className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded text-sm transition"
+                className="bg-ocean hover:bg-ocean-dark text-moon font-bold py-2 px-4 rounded text-sm transition"
               >
                 Approve Arrival
               </button>

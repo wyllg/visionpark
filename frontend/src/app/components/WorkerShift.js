@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import { useUser } from "@clerk/nextjs";
 import EntranceApproval from './EntranceApproval';
 import ExitApproval from './ExitApproval';
+import { UserKey } from 'lucide-react';
 
 export default function WorkerShift({ onApprove }) {
   const { user, isLoaded } = useUser();
@@ -78,15 +79,20 @@ export default function WorkerShift({ onApprove }) {
   // ==========================================
   if (!activeShift) {
     return (
-      <div className="w-full max-w-6xl glass-panel mx-auto space-y-6">
-        
+      <div className="w-full pt-4">
+        <div className="w-full flex justify-between items-center pb-4 border-b border-moon/10 mb-4">
+          <h2 className="flex items-center gap-2.5 text-base sm:text-lg font-semibold text-moon">
+            <UserKey className="w-4.5 h-4.5 text-ocean flex-shrink-0" />
+            Worker
+          </h2>
+        </div>
       
-      <div className="p-6 rounded-lg shadow-md border-t-4 border-blue-600">
-        <h2 className="text-xl font-bold mb-2">Gate is Unattended</h2>
-        <p className="text-gray-400 mb-6">You must clock in to start monitoring vehicles.</p>
+      <div className="flex flex-col items-center p-6 rounded-lg ">
+        <h2 className="text-lg font-bold mb-2">Gate is Unattended</h2>
+        <p className="text-moon/80 text-sm mb-4">You must clock in to start monitoring vehicles.</p>
         <button
           onClick={handleClockIn}
-          className="max-w-6xl bg-blue-600 text-white font-semibold px-4 py-3 rounded hover:bg-blue-700 transition"
+          className="max-w-6xl bg-ocean text-moon font-semibold px-5 py-1.5 rounded hover:bg-ocean-dark transition-all hover:scale-102 active:scale-98 active:brightness-75"
         >
           Clock In
         </button>
@@ -100,17 +106,23 @@ export default function WorkerShift({ onApprove }) {
   // ==========================================
   if (activeShift.worker_id === user.id) {
     return (
-      <div className="p-6 bg-green-50 rounded-lg shadow-md max-w-3xl border-t-4 border-green-500">
+      <div className="w-full pt-4">
+        <div className="w-full flex justify-between items-center pb-4 border-b border-moon/10 mb-4">
+          <h2 className="flex items-center gap-2.5 text-base sm:text-lg font-semibold text-moon">
+            <UserKey className="w-4.5 h-4.5 text-ocean flex-shrink-0" />
+            Worker
+          </h2>
+        </div>
         <div className="flex justify-between items-center mb-6">
           <div>
-            <h2 className="text-xl font-bold text-green-800">🟢 Active Shift</h2>
-            <p className="text-sm text-green-600">
+            <h2 className="text-xl font-bold text-go ">Active Shift</h2>
+            <p className="text-sm ">
               Started at: {new Date(activeShift.start_time).toLocaleTimeString()}
             </p>
           </div>
           <button
             onClick={handleClockOut}
-            className="bg-red-500 text-white font-semibold px-4 py-2 rounded hover:bg-red-600 transition"
+            className="bg-cherry text-moon font-semibold px-4 py-2 rounded hover:bg-cherry-dark transition-all hover:scale-102 active:scale-98 active:brightness-75"
           >
             End Shift (Clock Out)
           </button>
@@ -118,7 +130,7 @@ export default function WorkerShift({ onApprove }) {
 
         {/* YUNG NAKA CLOCK IN AY MAKIKITA ITONG MGA CAR ENTRANCE AND EXIT SHIT
         */}
-        <div>
+        <div className="space-y-3">
           <EntranceApproval onApprove={onApprove}/>
           <ExitApproval onApprove={onApprove}/>
         </div>
@@ -130,19 +142,19 @@ export default function WorkerShift({ onApprove }) {
   // STATE 3: SOMEONE IS CLOCKED IN (AND IT IS NOT ME) bye bye previous worker
   // ==========================================
   return (
-    <div className="p-6 bg-yellow-50 rounded-lg shadow-md max-w-md border-t-4 border-yellow-500">
-      <h2 className="text-xl font-bold text-yellow-800 mb-2">Gate is Attended</h2>
-      <p className="text-yellow-700 mb-6">
-        <strong>{activeShift.worker_name}</strong> is currently on shift.
+    <div className="flex flex-col items-center p-4 bg-mustard/10 rounded-xl shadow-sm border border-mustard/60">
+      <h2 className="text-xl font-bold text-moon mb-2">Gate is Attended</h2>
+      <p className="text-mustard-light mb-6">
+        <strong className="text-mustard">{activeShift.worker_name}</strong> is currently on shift.
       </p>
       
-      <p className="text-sm text-gray-600 mb-4">
+      <p className="text-sm text-moon mb-4">
         Need to relieve them? Taking over will automatically clock them out and clock you in.
       </p>
       
       <button
         onClick={handleClockIn}
-        className="w-full bg-yellow-600 text-white font-semibold px-4 py-3 rounded hover:bg-yellow-700 transition"
+        className=" bg-yellow-600 px-4 py-2 text-moon font-semibold rounded hover:bg-mustard-dark transition"
       >
         Take Over Shift
       </button>
