@@ -27,20 +27,19 @@ app = FastAPI(
     version="1.0.0"
 )
 
-# 4. Configure CORS (Cross-Origin Resource Sharing)
-# THIS IS CRITICAL: Without this, your browser will block Next.js from talking to FastAPI!
-origins = [
-    "http://localhost:3000",  # Your local Next.js frontend
-    # You will add your actual production domain here later (e.g., "https://visionpark.vercel.app")
-    "https://visionpark.vercel.app",
-]
+# 1. Grab the string from the environment variable
+# We add a fallback to localhost just in case the env var fails to load
+origins_string = os.getenv("ALLOWED_ORIGINS", "http://localhost:3000")
+
+# 2. Split the string into a Python list
+allowed_origins_list = origins_string.split(",")
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=origins,
+    allow_origins=allowed_origins_list,
     allow_credentials=True,
-    allow_methods=["*"],  # Allows all methods (GET, POST, PUT, DELETE)
-    allow_headers=["*"],  # Allows all headers
+    allow_methods=["*"],
+    allow_headers=["*"],
 )
 
 # 5. Connect your Feature Routers
