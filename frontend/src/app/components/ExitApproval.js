@@ -11,7 +11,8 @@ export default function ExitApproval({ onApprove }) {
   useEffect(() => {
     const fetchPending = async () => {
       try {
-        const res = await fetch('/_/backend/api/parking/pending/exit');
+        const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL || '';
+        const res = await fetch(`${baseUrl}/api/parking/pending/exit`);
         const json = await res.json();
 
         if (json.status === 'success') {
@@ -36,7 +37,8 @@ export default function ExitApproval({ onApprove }) {
     const uppercasePlate = (plateToApprove || "").toUpperCase();
 
     try {
-      const res = await fetch('/_/backend/api/parking/approve/exit', {
+      const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL || '';
+      const res = await fetch(`${baseUrl}/api/parking/approve/exit`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ 

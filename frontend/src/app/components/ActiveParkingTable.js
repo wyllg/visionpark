@@ -26,7 +26,8 @@ export default function ActiveParkingTable({ refreshTrigger }) {
   useEffect(() => {
     const fetchParkingData = async () => {
       try {
-        const res = await fetch('/_/backend/api/parking/active');
+        const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL || '';
+        const res = await fetch(`${baseUrl}/api/parking/active`);
         const json = await res.json();
         if (json.status === 'success') {
           setVehicles(json.data);

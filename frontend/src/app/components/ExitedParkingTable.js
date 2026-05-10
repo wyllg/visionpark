@@ -11,8 +11,8 @@ export default function ExitedParkingTable({ refreshTrigger }) {
   useEffect(() => {
     const fetchParkingData = async () => {
       try {
-        // Pointing to your exited endpoint
-        const res = await fetch('/_/backend/api/parking/exited');
+        const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL || '';
+        const res = await fetch(`${baseUrl}/api/parking/exited`);
         const json = await res.json();
         if (json.status === 'success') {
           setVehicles(json.data);

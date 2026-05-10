@@ -11,7 +11,8 @@ export default function EntranceApproval({ onApprove }) {
   useEffect(() => {
     const fetchPending = async () => {
       try {
-        const res = await fetch('/_/backend/api/parking/pending/entrance');
+        const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL || '';
+        const res = await fetch(`${baseUrl}/api/parking/pending/entrance`);
         const json = await res.json();
 
         if (json.status === 'success') {
@@ -36,7 +37,8 @@ export default function EntranceApproval({ onApprove }) {
     const uppercasePlate = (currentPlate || "").toUpperCase();
 
     try {
-      const res = await fetch('/_/backend/api/parking/approve/entrance', {
+      const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL || '';
+      const res = await fetch(`${baseUrl}/api/parking/approve/entrance`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ 

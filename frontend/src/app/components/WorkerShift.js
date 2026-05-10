@@ -12,7 +12,8 @@ export default function WorkerShift({ onApprove }) {
 
   const fetchActiveShift = async () => {
     try {
-      const res = await fetch("/_/backend/api/worker/status/active");
+      const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL || '';
+      const res = await fetch(`${baseUrl}/api/worker/status/active`);
       const data = await res.json();
       
       if (data.status === "success" && data.data.length > 0) {
@@ -38,7 +39,8 @@ export default function WorkerShift({ onApprove }) {
     if (!user) return;
     setLoading(true);
     try {
-      await fetch("/_/backend/api/worker/clock_in", {
+      const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL || '';
+      await fetch(`${baseUrl}/api/worker/clock_in`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -57,7 +59,8 @@ export default function WorkerShift({ onApprove }) {
     if (!user) return;
     setLoading(true);
     try {
-      await fetch("/_/backend/api/worker/clock_out", {
+      const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL || '';
+      await fetch(`${baseUrl}/api/worker/clock_out`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
