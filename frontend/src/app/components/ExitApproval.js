@@ -1,11 +1,10 @@
 'use client';
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import { useUser } from '@clerk/nextjs';
 import { LogOut } from 'lucide-react';
 
 export default function ExitApproval({ onApprove }) {
   const [pendingCars, setPendingCars] = useState([]);
-  const localEdits = useRef({});
   const { user } = useUser();
 
   useEffect(() => {
@@ -16,12 +15,22 @@ export default function ExitApproval({ onApprove }) {
         const json = await res.json();
 
         if (json.status === 'success') {
-          setPendingCars(
-            json.data.map(dbCar => ({
-              ...dbCar,
-              raw_plate_read: localEdits.current[dbCar.id] ?? dbCar.raw_plate_number,
-            }))
-          );
+          // THE FIX: Merge the new database data with the worker's live typing!
+          setPendingCars(prevCars => {
+            return json.data.map(dbCar => {
+              // 1. Check if this specific car is already on the screen
+              const existingCar = prevCars.find(c => c.id === dbCar.id);
+              
+              // 2. Grab the plate from the DB
+              const databasePlate = dbCar.raw_plate_number || dbCar.plate_number || "";
+
+              return {
+                ...dbCar,
+                // 3. Preserve the edited text if the car is already on screen
+                raw_plate_read: existingCar ? existingCar.raw_plate_read : databasePlate,
+              };
+            });
+          });
         }
       } catch (error) {
         console.error("Failed to fetch pending exits:", error);
@@ -50,7 +59,7 @@ export default function ExitApproval({ onApprove }) {
 
       const result = await res.json();
       if (result.status === 'success') {
-        delete localEdits.current[id];
+        // Remove it cleanly from the screen
         setPendingCars(prev => prev.filter(car => car.id !== id));
         if (onApprove) onApprove(); // Refreshes table!
       } else {
@@ -62,8 +71,10 @@ export default function ExitApproval({ onApprove }) {
   };
 
   const handleInputChange = (id, newText) => {
-    localEdits.current[id] = newText;
-    setPendingCars(prev => prev.map(car => car.id === id ? { ...car, raw_plate_number: newText } : car));
+    // Simply update the React state directly
+    setPendingCars(prev => 
+      prev.map(car => car.id === id ? { ...car, raw_plate_read: newText } : car)
+    );
   };
 
   return (
@@ -86,7 +97,8 @@ export default function ExitApproval({ onApprove }) {
                      <span className="text-sm font-semibold text-moon-dark">Plate:</span>
                      <input
                       type="text"
-                      value={car.raw_plate_number}
+                      // Updated this to match handleInputChange and handleApprove!
+                      value={car.raw_plate_read}
                       onChange={(e) => handleInputChange(car.id, e.target.value)}
                       className="uppercase border-2 font-bold border-cherry-dark/70 rounded px-2 py-1 text-moon focus:outline-none focus:border-orange-500 w-32"
                     />

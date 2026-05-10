@@ -1,11 +1,10 @@
 'use client';
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import { useUser } from '@clerk/nextjs';
-import { LogIn, LogInIcon } from 'lucide-react';
+import { LogIn } from 'lucide-react';
 
 export default function EntranceApproval({ onApprove }) {
   const [pendingCars, setPendingCars] = useState([]);
-  const localEdits = useRef({}); // Prevents polling from overwriting typing
   const { user } = useUser();
 
   useEffect(() => {
@@ -16,12 +15,23 @@ export default function EntranceApproval({ onApprove }) {
         const json = await res.json();
 
         if (json.status === 'success') {
-          setPendingCars(
-            json.data.map(dbCar => ({
-              ...dbCar,
-              raw_plate_read: localEdits.current[dbCar.id] ?? dbCar.raw_plate_number,
-            }))
-          );
+          // Use 'prevCars' to merge the new database data with your local typing!
+          setPendingCars(prevCars => {
+            return json.data.map(dbCar => {
+              // 1. Check if this specific car is already on the screen
+              const existingCar = prevCars.find(c => c.id === dbCar.id);
+              
+              // 2. Grab the plate from the DB (Checking both possible column names just in case)
+              const databasePlate = dbCar.raw_plate_number || dbCar.plate_number || "";
+
+              return {
+                ...dbCar,
+                // 3. If the car is already on screen, preserve the 'raw_plate_read' the worker is currently typing. 
+                // If it's a new arrival, use the database's guess.
+                raw_plate_read: existingCar ? existingCar.raw_plate_read : databasePlate,
+              };
+            });
+          });
         }
       } catch (error) {
         console.error("Failed to fetch pending entrances:", error);
@@ -50,9 +60,9 @@ export default function EntranceApproval({ onApprove }) {
 
       const result = await res.json();
       if (result.status === 'success') {
-        delete localEdits.current[id]; 
+        // Remove it cleanly from the screen
         setPendingCars(prev => prev.filter(car => car.id !== id));
-        if (onApprove) onApprove(); // Refreshes the Active Parking table!
+        if (onApprove) onApprove(); 
       } else {
         alert(`Failed: ${result.message}`);
       }
@@ -62,8 +72,10 @@ export default function EntranceApproval({ onApprove }) {
   };
 
   const handleInputChange = (id, newText) => {
-    localEdits.current[id] = newText;
-    setPendingCars(prev => prev.map(car => car.id === id ? { ...car, raw_plate_read: newText } : car));
+    // Simply update the React state. The fetch loop will respect this change now!
+    setPendingCars(prev => 
+      prev.map(car => car.id === id ? { ...car, raw_plate_read: newText } : car)
+    );
   };
 
   return (
