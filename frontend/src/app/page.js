@@ -7,6 +7,7 @@ import ActiveParkingTable from './components/ActiveParkingTable';
 import ExitedParkingTable from './components/ExitedParkingTable';
 import WorkerShift from './components/WorkerShift';
 import Hero from './components/Hero';
+import AdminPanel from './components/AdminPanel';
 
 export default function YourComponent() {
   const { isLoaded: isAuthLoaded, userId } = useAuth();
@@ -14,10 +15,10 @@ export default function YourComponent() {
   const { organization } = useOrganization();
   const orgName = organization?.name?.toLowerCase();
 
-  const [refreshTrigger, setRefreshTrigger] = useState(0);
-  const handleCarApproved = () => {
-    setRefreshTrigger(prev => prev + 1);
-  }
+  // const [refreshTrigger, setRefreshTrigger] = useState(0);
+  // const handleCarApproved = () => {
+  //   setRefreshTrigger(prev => prev + 1);
+  // }
   
 
   // Error Handling and Loading Component
@@ -42,22 +43,17 @@ export default function YourComponent() {
 
           {/* IF ADMIN */}
           {orgName === 'admin' && (
-            <div className="p-6 rounded-lg shadow-md border border-red-200 bg-red-50 text-red-800">
-              <h2 className="font-bold text-lg hover:text-blue-700">
-                <Link href="/pages/admin">
-                  ADMIN PAGE
-                </Link>
-              </h2>
-              <p>Management analytics and audit trails go here.</p>
-
+            <div className='w-full max-w-6xl mx-auto space-y-6 rounded-3xl pb-5'>
+              <AdminPanel />
             </div>
+
             
           )}
 
           {/* IF WORKER */}
           {orgName === 'worker' && (
             <div className='w-full max-w-6xl mx-auto space-y-6 rounded-3xl pb-5'>
-              <WorkerShift onApprove={handleCarApproved} />
+              <WorkerShift />
             </div>
           )}
         </>
@@ -66,10 +62,10 @@ export default function YourComponent() {
       {/* ANYONE CAN VIEW */}
       <div className='flex flex-col space-y-4'>
         <div className='w-full max-w-6xl mx-auto space-y-6 rounded-3xl pb-5'>
-          <ActiveParkingTable refreshTrigger={refreshTrigger} />
+          <ActiveParkingTable/>
         </div>
         <div className='w-full max-w-6xl mx-auto space-y-6 rounded-3xl pb-5'>
-          <ExitedParkingTable refreshTrigger={refreshTrigger} />
+          <ExitedParkingTable/>
         </div>
       </div>
 

@@ -1,15 +1,17 @@
-"use client";
+'use client';
 import { useState, useEffect } from "react";
 import { useUser } from "@clerk/nextjs";
 import EntranceApproval from './EntranceApproval';
 import ExitApproval from './ExitApproval';
 import { UserKey } from 'lucide-react';
+import { supabase } from '../../lib/supabase'; // <-- 1. Import your Supabase client
 
 export default function WorkerShift({ onApprove }) {
   const { user, isLoaded } = useUser();
   const [activeShift, setActiveShift] = useState(null);
   const [loading, setLoading] = useState(true);
 
+  // 1. Move fetchActiveShift OUTSIDE the useEffect
   const fetchActiveShift = async () => {
     try {
       const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL || '';
@@ -29,11 +31,26 @@ export default function WorkerShift({ onApprove }) {
   };
 
   useEffect(() => {
+    // 2. Call it here inside useEffect
     fetchActiveShift();
-    // Optional: Refresh every 30 seconds to catch if someone else takes over
-    const interval = setInterval(fetchActiveShift, 30000); 
-    return () => clearInterval(interval);
-  }, []);
+    
+    const channel = supabase.channel('realtime-worker-shift');
+
+    channel.on(
+      'postgres_changes',
+      { event: '*', schema: 'public', table: 'workershift '}, // Note: watch out for the space in 'workershift '
+      (payload) => {
+        console.log('Global database change detected! Refreshing Worker Table');
+        fetchActiveShift();
+      }
+    );
+
+    channel.subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    }
+  }, []); // <-- React will run this once on mount
 
   const handleClockIn = async () => {
     if (!user) return;
@@ -48,7 +65,8 @@ export default function WorkerShift({ onApprove }) {
           worker_name: user.fullName || user.firstName || user.primaryEmailAddress?.emailAddress,
         }),
       });
-      fetchActiveShift();
+      // 3. Now this will work perfectly!
+      fetchActiveShift(); 
     } catch (error) {
       console.error("Failed to clock in:", error);
       setLoading(false);
@@ -75,7 +93,7 @@ export default function WorkerShift({ onApprove }) {
     }
   };
 
-  if (!isLoaded || loading) return <div className="p-4 text-gray-500">Loading Gate Status...</div>;
+  if (!isLoaded || loading) return <div className="p-4 flex flex-col justify-center items-center">Loading Gate Status...</div>;
 
   // ==========================================
   // STATE 1: NO ONE IS CLOCKED IN

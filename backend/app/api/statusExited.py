@@ -23,9 +23,12 @@ manila = pytz.timezone("Asia/Manila")
 @router.get("/api/parking/exited")
 def get_exited_parking_status():
     try:
-        response = supabase.table("licenseplate").select(
-            "plate_number, time_in, time_out, status, total_fee"
-        ).eq("status", "Exited").order("time_out", desc=True).limit(100).execute()
+        response = supabase.table("licenseplate")\
+            .select("*")\
+            .eq("status", "Exited")\
+            .order("time_out", desc=True)\
+            .limit(100)\
+            .execute()
         
         return {"status": "success", "data": response.data}
         

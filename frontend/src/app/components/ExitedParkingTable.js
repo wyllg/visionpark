@@ -2,8 +2,9 @@
 
 import { useState, useEffect } from 'react';
 import { LogOut } from 'lucide-react';
+import { supabase } from '../../lib/supabase'; // <-- 1. Import your Supabase client
 
-export default function ExitedParkingTable({ refreshTrigger }) {
+export default function ExitedParkingTable() {
   const [vehicles, setVehicles] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -24,9 +25,30 @@ export default function ExitedParkingTable({ refreshTrigger }) {
       }
     };
     
+// 1. Fetch immediately when the page loads
     fetchParkingData();
+    
+    // 2. Set up Supabase Realtime to listen for any global changes
+    const channel = supabase.channel('realtime-exited-parking');
 
-  }, [refreshTrigger]);
+    channel.on(
+      'postgres_changes',
+      { event: '*', schema: 'public', table: 'licenseplate' }, 
+      (payload) => {
+        console.log('🔄 Global database change detected! Refreshing Exited Table...'); 
+        fetchParkingData();
+      }
+    );
+
+    // Subscribe AFTER attaching the listener (to prevent Next.js Strict Mode bugs)
+    channel.subscribe();
+
+    // 3. Clean up the connection when the component unmounts
+    return () => {
+      supabase.removeChannel(channel);
+    };
+
+  }, []);
 
   // 2. A simplified Elapsed Time calculator (No live clock needed!)
   const elapsedTime = (timeIn, timeOut) => {

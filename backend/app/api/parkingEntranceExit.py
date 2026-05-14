@@ -28,36 +28,31 @@ manila = pytz.timezone("Asia/Manila")
 class EntranceApprovalData(BaseModel):
     id: str
     plate_number: str
-    worker_id: str  # NEW: The Clerk ID of the worker approving the entrance
+    worker_id: str
+    vehicle_type: str
+    confidence_score: float
 
 class ExitApprovalData(BaseModel):
     id: str
     plate_number: str
-    worker_id: str  # NEW: The Clerk ID of the worker checking them out
+    worker_id: str
+    vehicle_type: str = "Car"        # ← optional, default to Car
+    confidence_score: float = 0.0 
+
+PARKING_RATES = {
+    "Car": {"hourly_rate": 30},
+    "Motor": {"hourly_rate": 15}
+}
 
 # --- GET: FETCH PENDING QUEUES ---
-@router.get("/api/parking/pending/entrance")
-def get_pending_entrances():
+@router.get("/api/parking/pending/{source_gate}") # <-- Removed vehicle_type
+def get_pending(source_gate: str): # <-- Removed vehicle_type here too
     try:
-        # Fetch only pending arrivals
+        # Fetch all pending arrivals (both Cars and Motors)
         response = supabase.table("pendingplate")\
             .select("*")\
             .eq("status", "Pending")\
-            .eq("source_gate", "Entrance")\
-            .order("detection_time", desc=False)\
-            .execute()
-        return {"status": "success", "data": response.data}
-    except Exception as e:
-        return {"status": "error", "message": str(e)}
-
-@router.get("/api/parking/pending/exit")
-def get_pending_exits():
-    try:
-        # Fetch only pending departures (includes fuzzy match suggestions)
-        response = supabase.table("pendingplate")\
-            .select("*")\
-            .eq("status", "Pending")\
-            .eq("source_gate", "Exit")\
+            .ilike("source_gate", source_gate)\
             .order("detection_time", desc=False)\
             .execute()
         return {"status": "success", "data": response.data}
@@ -72,71 +67,63 @@ def approve_entrance(data: EntranceApprovalData):
             "plate_number": data.plate_number.upper(),
             "time_in": datetime.now(manila).isoformat(),
             "status": "Active",
-            "worker_in_id": data.worker_id # <-- Saved here!
+            "worker_in_id": data.worker_id,
+            "vehicle_type": data.vehicle_type,
+            "confidence_score": data.confidence_score
         }
         supabase.table("licenseplate").insert(new_row).execute()
         supabase.table("pendingplate").delete().eq("id", data.id).execute()
 
-        return {"status": "success", "message": f"Entrance Approved: {data.plate_number}"}
+        return {"status": "success", "message": f"Entrance Approved: {data.plate_number}, {data.vehicle_type}"}
     except Exception as e:
         return {"status": "error", "message": str(e)}
 
 @router.post("/api/parking/approve/exit")
 def approve_exit(data: ExitApprovalData):
     try:
-        # 1. Find the car in Active Parking
-        active_car = supabase.table("licenseplate")\
+        # 1. Fetch Active Record (ADDED .strip() to clean invisible spaces!)
+        clean_plate = data.plate_number.upper().strip()
+        
+        active_query = supabase.table("licenseplate")\
             .select("*")\
-            .eq("plate_number", data.plate_number.upper())\
+            .eq("plate_number", clean_plate)\
             .eq("status", "Active")\
             .execute()
 
-        if not active_car.data:
-            return {"status": "error", "message": "Car not found in active parking!"}
+        if not active_query.data:
+            return {"status": "error", "message": "Vehicle not found!"}
 
-        car_record = active_car.data[0]
+        record = active_query.data[0]
+        v_type = record.get("vehicle_type", "Car") # Default to Car if missing
 
-        # 2. Calculate the Time Parked (Safely handling timezones)
-        time_in_str = car_record["time_in"].replace("Z", "+00:00")
-        time_in = datetime.fromisoformat(time_in_str)
+        # 2. Calculate Duration
+        time_in = datetime.fromisoformat(record["time_in"].replace("Z", "+00:00")).replace(tzinfo=None)
+        time_out = datetime.now(manila).replace(tzinfo=None)
         
-        time_out = datetime.now(manila)
-        
-        # Ensure BOTH times are stripped of timezone data before subtracting to prevent crashes
-        time_in_naive = time_in.replace(tzinfo=None)
-        time_out_naive = time_out.replace(tzinfo=None)
-        
-        # Get difference in hours
-        duration_seconds = (time_out_naive - time_in_naive).total_seconds()
-        hours_parked = duration_seconds / 3600.0
+        # Prevent negative time glitches
+        elapsed_seconds = max(0, (time_out - time_in).total_seconds())
+        hours_parked = elapsed_seconds / 3600.0
 
-        # 3. Calculate Total Fee (Example: Standard PH Mall Rate)
-        # Flat rate of 40 PHP for the first 3 hours, then 10 PHP per succeeding hour
-        if hours_parked <= 1:
-            total_fee = 30.00
-        else:
-            # math.ceil rounds up (e.g., 3.1 hours becomes 4 hours of charging)
-            total_hours = max(1, math.ceil(hours_parked))
-            total_fee = total_hours * 30.00
+        # 3. Dynamic Fee Logic
+        billable_hours = max(1, math.ceil(hours_parked))
 
-        # 4. Update the Database with Fee and Worker ID
-        supabase.table("licenseplate")\
-            .update({
-                "status": "Exited", 
-                "time_out": time_out.isoformat(),
-                "total_fee": total_fee,                 # <-- Saved here!
-                "worker_exit_id": data.worker_id         # <-- Saved here!
-            })\
-            .eq("id", car_record["id"])\
-            .execute()
+        if v_type == "Car":
+            total_fee = billable_hours * 30.0
+        else: # Motor
+            total_fee = billable_hours * 15.0
 
-        # 5. Delete from Pending Detections
+        # 4. Database Update
+        supabase.table("licenseplate").update({
+            "status": "Exited",
+            "time_out": datetime.now(manila).isoformat(),
+            "total_fee": total_fee,
+            "worker_exit_id": data.worker_id
+        }).eq("id", record["id"]).execute()
+
+        # 5. Cleanup
         supabase.table("pendingplate").delete().eq("id", data.id).execute()
 
-        return {
-            "status": "success", 
-            "message": f"Exit Approved. Fee: ₱{total_fee:.2f}"
-        }
+        return {"status": "success", "fee": total_fee}
+
     except Exception as e:
-        print(f"Exit Error: {e}")
         return {"status": "error", "message": str(e)}
