@@ -6,7 +6,7 @@
 [Insert Video Demo Here]
 
 **Dashboard Screenshots:**
-<img width="1897" height="1078" alt="Image" src="https://github.com/user-attachments/assets 02cfa2cc-06de-4fab-9894-d30ab63aba86" />
+<img width="1897" height="1078" alt="Image" src="https://github.com/user-attachments/assets/30f05d96-7ed9-4f98-9107-53da4b7f3b28" />
 
 <img width="1897" height="1078" alt="Image" src="https://github.com/user-attachments/assets/5dbaa796-1971-4854-8ec7-25417d2303a6" />
 
