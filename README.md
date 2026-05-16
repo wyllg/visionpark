@@ -8,9 +8,7 @@
 <div align="center">
   <h2>Media & Demonstration</h2>
   
-  <video width="800" controls>
-    <source src="https://github.com/user-attachments/assets/802ec9f9-c8b5-4153-ba32-d750fdd58def" type="video/mp4">
-  </video>
+  <img width="800" alt="VisionPark Demo" src="YOUR_GIF_LINK_HERE" />
   
   <br><br>
   
