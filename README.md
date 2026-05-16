@@ -1,14 +1,19 @@
-# VisionPark: Automated Parking Management System
-[visionpark.vercel.app](https://visionpark.vercel.app/)
+<div align="center">
+  <h1>VisionPark: Automated Parking Management System</h1>
+  <p><a href="https://visionpark.vercel.app/"><strong>visionpark.vercel.app</strong></a></p>
+</div>
 
-## Media & Demonstration
+---
 
-[Insert Video Demo Here]
-
-**Dashboard Screenshots:**
-<img width="1897" height="1078" alt="Image" src="https://github.com/user-attachments/assets/30f05d96-7ed9-4f98-9107-53da4b7f3b28" />
-
-<img width="1897" height="1078" alt="Image" src="https://github.com/user-attachments/assets/5dbaa796-1971-4854-8ec7-25417d2303a6" />
+<div align="center">
+  <h2>Media & Demonstration</h2>
+  <p><em>[Insert Video Demo Here]</em></p>
+  
+  <h3>Dashboard Screenshots:</h3>
+  <img width="800" alt="Live Public Dashboard" src="https://github.com/user-attachments/assets/30f05d96-7ed9-4f98-9107-53da4b7f3b28" />
+  <br><br>
+  <img width="800" alt="Worker Approval Screen" src="https://github.com/user-attachments/assets/5dbaa796-1971-4854-8ec7-25417d2303a6" />
+</div>
 
 ---
 
