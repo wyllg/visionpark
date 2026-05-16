@@ -4,7 +4,7 @@ import { useUser } from "@clerk/nextjs";
 import EntranceApproval from './EntranceApproval';
 import ExitApproval from './ExitApproval';
 import { UserKey } from 'lucide-react';
-import { supabase } from '../../lib/supabase'; // <-- 1. Import your Supabase client
+import { supabase } from '../../lib/supabase';
 
 export default function WorkerShift({ onApprove }) {
   const { user, isLoaded } = useUser();

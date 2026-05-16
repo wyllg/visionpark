@@ -1,16 +1,17 @@
 import "./globals.css";
 import { ClerkProvider } from '@clerk/nextjs'
 import Navbar from "./navbar";
+import Footer from "./footer";
 
 export const metadata = {
   title: "VisionPark",
   description: "-W",
   icons: {
-    icon: '/vercel.svg',
+    icon: '/svg/logo.svg',
   },
 };
 
-// { children } renders page.js
+// { children } RENDERS page.js
 export default function RootLayout({ children }) {
 
   return (
@@ -25,6 +26,7 @@ export default function RootLayout({ children }) {
         >
           <Navbar />
           {children}
+          <Footer />
         </ClerkProvider>
       </body>
     </html>

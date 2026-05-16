@@ -5,14 +5,19 @@ import { LogIn } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
 
 // CONFIGURATION
-const CONFIDENCE_THRESHOLD = 85; // Minimum score to trigger auto-approve
-const AUTO_APPROVE_DELAY_MS = 15000; // 15 seconds
+const CONFIDENCE_THRESHOLD = 90; // Minimum score to trigger auto-approve
+const AUTO_APPROVE_DELAY_MS = 600000; // 60 seconds
 
 export default function EntranceApproval({ onApprove }) {
   const [pendingCars, setPendingCars] = useState([]);
   const [currentTime, setCurrentTime] = useState(Date.now()); 
   const { user } = useUser();
-  const autoApprovingRefs = useRef(new Set()); 
+  const autoApprovingRefs = useRef(new Set());
+
+  // --- NEW STATE FOR MANUAL ENTRY ---
+  const [showManualForm, setShowManualForm] = useState(false);
+  const [manualPlate, setManualPlate] = useState("");
+  const [manualVehicleType, setManualVehicleType] = useState("Car");
 
   // 1. Timer to update the current time every second
   useEffect(() => {
@@ -78,6 +83,45 @@ export default function EntranceApproval({ onApprove }) {
     });
   }, [currentTime, pendingCars]);
 
+  const denyApprove = async (id, currentPlate, vehicleType, confidenceScore) => {
+    // 1. Ask for confirmation before proceeding
+    const isConfirmed = window.confirm(
+      `Are you sure you want to deny entrance for plate: ${currentPlate || "this vehicle"}?`
+    );
+    
+    // 2. If the user clicks "Cancel", stop the function here
+    if (!isConfirmed) {
+      return; 
+    }
+
+    const uppercasePlate = (currentPlate || "").toUpperCase();
+
+    try {
+      const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL || '';
+      const res = await fetch(`${baseUrl}/api/parking/deny/entrance`, {
+        method: 'DELETE', 
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ 
+          id, 
+          plate_number: uppercasePlate, 
+          worker_id: user?.fullName || user?.firstName || "Unknown Worker",
+          vehicle_type: vehicleType || "Car", 
+          confidence_score: confidenceScore || 0
+        }),
+      });
+
+      const result = await res.json();
+      if (result.status === 'success') {
+        setPendingCars(prev => prev.filter(car => car.id !== id));
+        autoApprovingRefs.current.delete(id); 
+      } else {
+        alert(`Failed: ${result.message}`);
+      }
+    } catch (error) {
+      console.error("Denial failed", error);
+    }
+  };
+
   // 5. Submit Function
   const handleApprove = async (id, currentPlate, vehicleType, confidenceScore) => {
     const uppercasePlate = (currentPlate || "").toUpperCase();
@@ -111,11 +155,78 @@ export default function EntranceApproval({ onApprove }) {
     }
   };
 
+  // --- NEW: Submit Manual Entry ---
+  const handleManualSubmit = async () => {
+    const isConfirmed = window.confirm(
+      `Are you sure you want to approve entrance this vehicle?`
+    );
+    
+    // 2. If the user clicks "Cancel", stop the function here
+    if (!isConfirmed) {
+      return; 
+    }
+
+    if (!manualPlate.trim()) {
+      alert("Please enter a plate number.");
+      return;
+    }
+
+    // Generate a temporary ID. Your backend will attempt to delete this from 
+    // pendingplate (which will safely do nothing) and then add it to licenseplate.
+    const tempId = "00000000-0000-0000-0000-000000000000";
+    
+    // We pass 100 as the confidence score since a human verified it
+    await handleApprove(tempId, manualPlate, manualVehicleType, 100);
+
+    // Reset and close the form
+    setManualPlate("");
+    setManualVehicleType("Car");
+    setShowManualForm(false);
+  };
+
   return (
     <div className="p-4 bg-ocean/30 rounded-xl shadow-sm border border-ocean">
-      <h2 className="text-lg font-bold text-ocean-light mb-3 flex items-center gap-2">
-        <LogIn className="w-4.5 h-4.5 text-ocean-light flex-shrink-0"/> Arriving Cars
-      </h2>
+{/* --- RESPONSIVE HEADER --- */}
+      <div className="flex justify-between items-center mb-3 gap-2">
+        <h2 className="text-base sm:text-lg font-bold text-ocean-light flex items-center gap-1.5 sm:gap-2">
+          <LogIn className="w-4 h-4 sm:w-4.5 sm:h-4.5 text-ocean-light flex-shrink-0"/> 
+          <span className="truncate">Arriving Cars</span>
+        </h2>
+        <button 
+          onClick={() => setShowManualForm(!showManualForm)}
+          className="bg-ocean hover:bg-ocean-dark text-moon font-bold py-1 px-2 sm:px-3 rounded text-xs sm:text-sm transition whitespace-nowrap"
+        >
+          {showManualForm ? "Cancel" : "+ Manual"}
+        </button>
+      </div>
+
+      {/* --- RESPONSIVE MANUAL ENTRY FORM --- */}
+      {showManualForm && (
+        <div className="bg-ocean/50 p-2 sm:p-3 rounded mb-3 sm:mb-4 border border-ocean-dark flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:gap-3">
+          <input
+            type="text"
+            placeholder="PLATE #"
+            value={manualPlate}
+            onChange={(e) => setManualPlate(e.target.value.toUpperCase())}
+            className="uppercase border-2 font-bold border-ocean-dark rounded px-2 py-1.5 sm:py-1 text-sm text-moon-light focus:outline-none focus:border-blue-500 w-full sm:flex-1 bg-transparent"
+          />
+          <select
+            value={manualVehicleType}
+            onChange={(e) => setManualVehicleType(e.target.value)}
+            className="border-2 border-ocean-dark rounded px-2 py-1.5 sm:py-1 text-sm text-moon-light font-semibold focus:outline-none bg-slate-800 w-full sm:w-auto"
+          >
+            <option value="Car">Car</option>
+            <option value="Motor">Motor</option>
+          </select>
+          <button
+            onClick={handleManualSubmit}
+            className="bg-go hover:bg-go/70 text-white font-bold py-1.5 sm:py-1 px-4 rounded transition text-sm w-full sm:w-auto"
+          >
+            Submit
+          </button>
+        </div>
+      )}
+
       
       {pendingCars.length === 0 ? (
         <p className="text-slate-300 text-sm">No pending arrivals.</p>
@@ -161,12 +272,20 @@ export default function EntranceApproval({ onApprove }) {
                 </div>
 
                 <div className="flex flex-col items-end">
+                  <div className='flex flex-row gap-2'>
                   <button 
                     onClick={() => handleApprove(car.id, car.raw_plate_read, car.vehicle_type, car.confidence_score)}
-                    className="bg-ocean hover:bg-ocean-dark text-moon font-bold py-2 px-4 rounded text-sm transition"
+                    className="bg-ocean hover:bg-ocean-dark text-moon font-bold py-2 px-2 rounded text-xs transition"
                   >
-                    Approve Arrival
+                    Approve
                   </button>
+                  <button 
+                  onClick={() => denyApprove(car.id, car.raw_plate_read, car.vehicle_type, car.confidence_score)}
+                  className='bg-cherry-dark hover:bg-cherry text-moon font-bold py-2 px-2 rounded text-xs transition'
+                >
+                  x 
+                </button>
+                  </div>
                   
                   {/* COUNTDOWN TEXT */}
                   {isHighConfidence && secondsLeft > 0 && (

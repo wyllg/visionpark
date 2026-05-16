@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import { useUser } from "@clerk/nextjs";
 import React from 'react';
 import { UserStar, Download, Car, DollarSign, Users, LogOut } from 'lucide-react';
+import { supabase } from "../../lib/supabase";
 
 export default function AdminPanel() {
   const { isLoaded } = useUser();
@@ -16,26 +17,43 @@ export default function AdminPanel() {
     todaysExits: 0
   });
 
-  useEffect(() => {
-    const fetchAdminData = async () => {
-      try {
-        const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL || '';
-        const res = await fetch(`${baseUrl}/api/admin/stats`);
-        const json = await res.json();
+  const fetchAdminData = async () => {
+    try {
+      const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL || '';
+      const res = await fetch(`${baseUrl}/api/admin/stats`);
+      const json = await res.json();
         
-        if (json.status === 'success') {
-          setStats(json.data);
-        }
-      } catch (error) {
-        console.error("Failed to load admin data", error);
-      } finally {
-        setLoading(false); 
+      if (json.status === 'success') {
+        setStats(json.data);
+        console.log("Fetched");
       }
-    };
+    } catch (error) {
+      console.error("Failed to load admin data", error);
+    } finally {
+      setLoading(false); 
+    }
+  };
 
+  useEffect(() => {
+    
     fetchAdminData();
-    const interval = setInterval(fetchAdminData, 10000);
-    return () => clearInterval(interval);
+    
+    const channel = supabase.channel('realtime-admin-data');
+
+    channel.on(
+      'postgres_changes',
+      {event: '*', schema: 'public', table: 'licenseplate'},
+      (payload) => {
+        console.log('Global database change detected! Refreshing Worker Table');
+        fetchAdminData();
+      }
+    );
+
+    channel.subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    }
   }, []);
 
   // --- REUSABLE CSV EXPORT LOGIC ---
@@ -85,9 +103,7 @@ export default function AdminPanel() {
 
   if (!isLoaded || loading) {
     return (
-      <div className="p-4 text-moon-dark text-sm animate-pulse flex items-center gap-2">
-        <UserStar className="w-4 h-4" /> Loading Admin Panel...
-      </div>
+      <div className="p-8 text-center animate-pulse text-moon">Loading Admin Panel</div>
     );
   }
 

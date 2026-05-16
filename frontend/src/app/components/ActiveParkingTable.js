@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { Activity } from 'lucide-react';
-import { supabase } from '../../lib/supabase'; // <-- 1. Import your Supabase client
+import { supabase } from '../../lib/supabase';
 
 export default function ActiveParkingTable() {
   const [vehicles, setVehicles] = useState([]);
@@ -11,8 +11,6 @@ export default function ActiveParkingTable() {
 
   const getBadgeClass = (status) => {
     if (status === 'Active') return 'badge-active text-green-400 bg-green-400/10 border-green-400/20';
-    if (status === 'Needs_Review') return 'badge-pending text-yellow-400 bg-yellow-400/10 border-yellow-400/20';
-    return 'badge-exited text-red-400 bg-red-400/10 border-red-400/20'; 
   };
 
   useEffect(() => {
@@ -118,15 +116,16 @@ export default function ActiveParkingTable() {
         </span>
       </div>
 
-      {/* DESKTOP COLUMN HEADERS — Added 'Type' column and adjusted grid ratio */}
+      {/* DESKTOP COLUMN HEADERS */}
       {vehicles.length > 0 && (
-        <div className="hidden md:grid grid-cols-[minmax(0,1.2fr)_minmax(0,0.8fr)_minmax(0,1fr)_minmax(0,1fr)_minmax(0,0.8fr)_80px] gap-x-4 px-3.5 pb-2">
-          {["Plate", "Type", "Time in", "Elapsed", "Status"].map(h => (
-            <span key={h} className="text-[11px] font-semibold uppercase tracking-widest text-slate-400">{h}</span>
+        <div className="hidden md:grid grid-cols-7 gap-x-4 px-3.5 pb-2">
+          {["Plate", "Type", "Date", "Time In", "Elapsed", "Status", "Fee"].map((h, i) => (
+            <span key={h} className={`text-[11px] font-semibold uppercase tracking-widest text-slate-400 ${i === 6 ? "text-right" : ""}`}>
+              {h}
+            </span>
           ))}
-          <span className="text-[11px] font-semibold uppercase tracking-widest text-slate-400 text-right">Fee</span>
         </div>
-      )}
+)}
 
       {/* LIST */}
       <div className="space-y-px">
@@ -140,7 +139,7 @@ export default function ActiveParkingTable() {
               {/* DESKTOP ROW */}
               <div className="
                 hidden md:grid
-                grid-cols-[minmax(0,1.2fr)_minmax(0,0.8fr)_minmax(0,1fr)_minmax(0,1fr)_minmax(0,0.8fr)_80px]
+                grid-cols-7
                 gap-x-4 items-center
                 px-3.5 py-2.5 rounded-lg
                 border border-transparent
@@ -152,6 +151,9 @@ export default function ActiveParkingTable() {
                 </span>
                 <span className="text-sm text-moon/80 capitalize">
                   {car.vehicle_type || 'Car'}
+                </span>
+                <span className="text-sm text-moon">
+                  {new Date(car.time_in).toLocaleDateString([], { month: 'long', day: '2-digit', year: 'numeric' })}
                 </span>
                 <span className="text-sm text-moon">
                   {new Date(car.time_in).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
@@ -195,7 +197,7 @@ export default function ActiveParkingTable() {
                 {/* col 1 bottom: time · elapsed */}
                 <div className="flex items-center gap-2 mt-3">
                   <span className="text-xs text-moon/80">
-                    In: {new Date(car.time_in).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                    In: {new Date(car.time_in).toLocaleTimeString([], { month: 'long', day: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' })}
                   </span>
                   <span className="text-ocean text-xs">·</span>
                   <span className="text-xs text-moon/80">

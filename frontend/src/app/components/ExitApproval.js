@@ -9,6 +9,10 @@ export default function ExitApproval({ onApprove }) {
   const [activeCars, setActiveCars] = useState([]); // <-- NEW: Stores active cars for live matching
   const { user } = useUser();
 
+  // --- NEW STATE FOR MANUAL EXIT ---
+  const [showManualForm, setShowManualForm] = useState(false);
+  const [manualPlate, setManualPlate] = useState("");
+
   useEffect(() => {
     // Fetch pending exits
     const fetchPending = async () => {
@@ -118,11 +122,89 @@ export default function ExitApproval({ onApprove }) {
     setPendingCars(prev => prev.map(car => car.id === id ? { ...car, raw_plate_read: newText } : car));
   };
 
+  // --- NEW: Submit Manual Exit ---
+  const handleManualSubmit = async () => {
+    if (!manualPlate.trim()) return;
+
+    // Use a structurally valid dummy UUID so the backend doesn't crash 
+    // when trying to delete from pendingplate.
+    const tempId = "00000000-0000-0000-0000-000000000000"; 
+    
+    await handleApprove(tempId, manualPlate);
+
+    // Reset and close
+    setManualPlate("");
+    setShowManualForm(false);
+  };
+
+  // Live match check for the manual form
+  const manualMatchedActiveCar = activeCars.find(
+    a => a.plate_number.toUpperCase().trim() === manualPlate.toUpperCase().trim()
+  );
+
   return (
     <div className="p-4 bg-cherry/20 rounded-xl shadow-sm border border-cherry/70">
-      <h2 className="text-lg font-bold text-cherry-light mb-3 flex items-center gap-2">
-        <LogOut className="w-4.5 h-4.5 text-cherry-light flex-shrink-0"/> Exiting Cars
-      </h2>
+      
+      {/* --- RESPONSIVE HEADER --- */}
+      <div className="flex justify-between items-center mb-3 gap-2">
+        <h2 className="text-base sm:text-lg font-bold text-cherry-light flex items-center gap-1.5 sm:gap-2">
+          <LogOut className="w-4 h-4 sm:w-4.5 sm:h-4.5 text-cherry-light flex-shrink-0"/> 
+          <span className="truncate">Exiting Cars</span>
+        </h2>
+        <button 
+          onClick={() => setShowManualForm(!showManualForm)}
+          className="bg-cherry/60 hover:bg-cherry text-moon font-bold py-1 px-2 sm:px-3 rounded text-xs sm:text-sm transition whitespace-nowrap"
+        >
+          {showManualForm ? "Cancel" : "+ Manual"}
+        </button>
+      </div>
+
+      {/* --- RESPONSIVE MANUAL EXIT FORM --- */}
+      {showManualForm && (
+        <div className="bg-cherry/20 p-2 sm:p-3 rounded mb-3 sm:mb-4 border border-cherry/50 flex flex-col gap-2">
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:gap-3">
+            <input
+              type="text"
+              placeholder="ENTER PLATE #"
+              value={manualPlate}
+              onChange={(e) => setManualPlate(e.target.value.toUpperCase())}
+              className={`uppercase border-2 font-bold rounded px-2 py-1.5 sm:py-1 text-sm text-moon focus:outline-none w-full sm:flex-1 bg-slate-800 ${
+                manualMatchedActiveCar ? 'border-ocean focus:border-ocean-light' : 'border-mustard focus:border-cherry-dark'
+              }`}
+            />
+            <button
+              disabled={!manualMatchedActiveCar}
+              onClick={handleManualSubmit}
+              className={`font-bold py-1.5 sm:py-1 px-4 rounded transition text-sm w-full sm:w-auto ${
+                manualMatchedActiveCar 
+                  ? 'bg-ocean hover:bg-ocean-dark text-moon shadow-lg' 
+                  : 'bg-cherry/50 text-moon/40 cursor-not-allowed'
+              }`}
+            >
+              Checkout
+            </button>
+          </div>
+
+          {/* Smart Live Match UI for Manual Input */}
+          {manualMatchedActiveCar ? (
+            <div className="p-2.5 bg-ocean/40 border border-ocean/70 rounded-md flex justify-between items-center mt-1">
+              <span className="text-xs text-ocean-light font-bold flex items-center gap-1.5">
+                ✓ Active Match 
+                <span className="bg-ocean/50 px-1.5 py-0.5 rounded border border-ocean/70 uppercase text-[10px]">
+                  {manualMatchedActiveCar.vehicle_type || 'Car'}
+                </span>
+              </span>
+              <span className="text-ocean-light tracking-wide font-bold text-sm">
+                ₱{calculateLiveFee(manualMatchedActiveCar.time_in, manualMatchedActiveCar.vehicle_type)}
+              </span>
+            </div>
+          ) : (
+            <div className="p-2.5 bg-mustard/20 border border-mustard/40 rounded-md mt-1">
+              <span className="text-xs text-yellow-400/80 font-medium">Type to find exact match in Active Parking...</span>
+            </div>
+          )}
+        </div>
+      )}
       
       {pendingCars.length === 0 ? (
         <p className="text-slate-300 text-sm">No pending exits.</p>

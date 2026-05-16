@@ -77,6 +77,15 @@ def approve_entrance(data: EntranceApprovalData):
         return {"status": "success", "message": f"Entrance Approved: {data.plate_number}, {data.vehicle_type}"}
     except Exception as e:
         return {"status": "error", "message": str(e)}
+    
+@router.delete("/api/parking/deny/entrance")
+def deny_entrance(data: EntranceApprovalData):
+    try:
+        supabase.table("pendingplate").delete().eq("id", data.id).execute()
+
+        return {"status": "success", "message": f"Entrance Denied: {data.plate_number}, {data.vehicle_type}"}
+    except Exception as e:
+        return {"status": "error", "message": str(e)}
 
 @router.post("/api/parking/approve/exit")
 def approve_exit(data: ExitApprovalData):

@@ -1,83 +1,49 @@
-# VisionPark Web Dashboard
+# VisionPark
 
-Welcome to the frontend repository for **VisionPark**, our automated parking management system. This project is built using **Next.js (App Router)**, **Tailwind CSS**, and **Clerk** for secure Role-Based Access Control (RBAC).
+An intelligent, edge-to-cloud automated parking management system that utilizes computer vision for license plate recognition, coupled with a real-time responsive web dashboard.
 
-This guide will help the team get the project up and running locally so we can all collaborate smoothly.
+## Media / Demo
 
----
+<!-- ⚠️ REPLACE THE PLACEHOLDERS BELOW WITH YOUR OWN VIDEOS AND IMAGES ⚠️ -->
 
-## Prerequisites
+### System Demo
+*[Insert Video Demo Here]*
 
-Before you begin, ensure you have **Node.js** installed on your machine (v18.x or higher is recommended for modern Next.js).
-
----
-
-## Getting Started
-
-Follow these steps to set up the VisionPark frontend on your local machine.
-
-### 1. Install Dependencies
-
-Once you have pulled the repository to your machine, install all the required packages (like Clerk and Next.js) listed in our `package.json` file. Open your terminal in the project folder and run:
-
-```bash
-npm install
-```
-
-> If you prefer another package manager, you can also use `yarn install`, `pnpm install`, or `bun install`.
+### Dashboard Screenshots
+| Active Parking View | Worker Approval Panel |
+| :---: | :---: |
+| *[Insert Image Here]* | *[Insert Image Here]* |
 
 ---
 
-### 2. Set Up Environment Variables 🔐
+## Overall Project Description
 
-Because we are utilizing Clerk to handle our Driver, Worker, and Admin logins, the application will crash if it cannot find our specific API keys. You must set up your local environment variables before running the server.
+VisionPark is designed to modernize parking lots by replacing manual ticketing with an automated, image-processing-based pipeline. It captures vehicle license plates upon entry and exit, records timestamps, and automatically computes parking fees based on vehicle type (e.g., motorcycles vs. cars).
 
-1. Create a new file named exactly **`.env.local`** in the root directory of the project.
-2. Reach out to the team lead to get the live Clerk API keys, or copy them from our shared workspace.
-3. Add the following keys to your `.env.local` file. Notice that our custom auth routes are specifically set to `/auth/login` and `/auth/signup`:
+The system is built with a **"Human-in-the-Loop"** philosophy. Recognizing that AI Optical Character Recognition (OCR) is not always 100% accurate, VisionPark uses a smart buffering system. When a car arrives, the AI's guess is placed into a "Pending" queue where an on-site worker can quickly verify or correct the read before it is published to the live parking database.
 
-```env
-NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=your_publishable_key_here
-CLERK_SECRET_KEY=your_secret_key_here
-```
+## How It Works
 
-> **Never commit the `.env.local` file to GitHub.** It is safely ignored in our `.gitignore` to prevent our security keys from leaking.
+1. **Edge Detection (The Gate):** A camera connected to an edge device (like a Raspberry Pi 4) captures incoming and outgoing vehicles. A local Python script intelligently crops the image to isolate the license plate, minimizing processing overhead.
+2. **Local AI Processing:** A lightweight YOLO model (YOLOv8-Nano) runs locally on the edge device to detect the bounding box of the plate, and Tesseract OCR extracts the characters. Keeping the heavy image processing off the cloud ensures the system remains fast and resilient against internet fluctuations.
+3. **The "Pending" Buffer:** The raw text data and detection confidence are sent to the cloud database. Instead of directly registering the car, it goes into a pending state to prevent ghost entries or OCR typos.
+4. **Worker Validation & Shift Sessions:** Parking attendants (logged in via a Shift Handover protocol to ensure data is tied to the correct operator) see the pending car instantly pop up on their dashboard via WebSockets. They verify the vehicle type, correct any AI typos, and hit "Approve & Publish."
+5. **Live Dashboard & Real-time Sync:** Once approved, the car enters the "Active Parking" table. The Next.js dashboard acts as a public-facing monitor where anyone (even unauthenticated drivers) can view parked cars, time elapsed, and current fees in real-time.
+6. **Checkout & Exit:** Upon exit, the system fuzzy-matches the exiting plate against active cars, calculates the final fee based on duration and vehicle type, and logs the historical record for administrative analytics. Admins can later download CSV reports of shift and revenue data.
 
----
+## Technologies Used
 
-### 3. Run the Development Server
+### Frontend (Web Dashboard)
+* **Next.js (App Router):** The core React framework for building the dynamic user interface.
+* **Tailwind CSS:** Used for responsive styling, featuring a custom "Traffic Light" theme and modern glassmorphism UI components.
+* **Clerk:** Handles secure user authentication, organization management (Worker vs. Admin roles), and secure session states.
 
-Once your dependencies are installed and your environment variables are saved, start the local Next.js development server:
+### Backend & Database
+* **FastAPI (Python):** A high-performance REST API backend handling business logic, worker shifts, and intelligent checkout routing.
+* **Supabase:** The core PostgreSQL database. Utilizes **Supabase Realtime (WebSockets)** to instantly push camera detections to the frontend without heavy API polling, and **Row Level Security (RLS)** to protect backend endpoints based on Clerk user roles.
 
-```bash
-npm run dev
-```
-
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the VisionPark dashboard in action! The page auto-updates as you edit the files in the `src/app` directory.
-
----
-
-## Project Structure Highlights
-
-For team members jumping into the code, here is a quick map of our most important frontend files:
-
-| File/Folder | Description |
-|---|---|
-| `src/app/layout.js` | Our persistent frame — contains global UI wrappers, the custom Navbar, and the `<ClerkProvider>` that wraps the whole app for authentication. |
-| `src/app/page.js` | The main dynamic content — holds unique content depending on whether the user is a guest, driver, worker, or admin. |
-| `src/app/auth/` | Contains our custom Clerk routing pages for `/auth/login` and `/auth/signup`. |
-| `src/app/components/` | Stores reusable UI pieces. |
-
----
-
-## 📚 Learn More
-
-To learn more about the specific technologies we are using to build VisionPark, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) — Learn about Next.js features and API.
-- [Clerk Next.js Authentication Guide](https://clerk.com/docs/quickstarts/nextjs) — Learn how our authentication wrappers work.
-- [Tailwind CSS Docs](https://tailwindcss.com/docs) — A quick reference guide for our styling utility classes.
-
-
-
-uvicorn app.main:app --reload
+### Edge Processing (Hardware & AI)
+* **Raspberry Pi / Edge Hardware:** The edge computing hardware managing the camera feeds and local logic in outdoor conditions.
+* **Ultralytics YOLOv8:** A highly optimized object detection model trained to identify license plates locally.
+* **PyTesseract (Tesseract OCR):** Extracts the alphanumeric characters from the cropped license plate images.
+* **OpenCV:** For image manipulation and frame processing.
