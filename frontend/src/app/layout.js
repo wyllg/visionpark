@@ -1,7 +1,7 @@
 import "./globals.css";
 import { ClerkProvider } from '@clerk/nextjs'
 import Navbar from "./navbar";
-import Footer from "./footer";
+
 
 export const metadata = {
   title: "VisionPark",
@@ -26,7 +26,6 @@ export default function RootLayout({ children }) {
         >
           <Navbar />
           {children}
-          <Footer />
         </ClerkProvider>
       </body>
     </html>

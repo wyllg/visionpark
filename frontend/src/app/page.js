@@ -9,6 +9,7 @@ import ExitedParkingTable from './components/ExitedParkingTable';
 import WorkerShift from './components/WorkerShift';
 import Hero from './components/Hero';
 import AdminPanel from './components/AdminPanel';
+import Footer from "./footer";
 
 export default function YourComponent() {
 
@@ -81,6 +82,7 @@ export default function YourComponent() {
         </div>
       </div>
 
+      <Footer />
     </div>
   );
 }
