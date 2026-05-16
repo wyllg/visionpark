@@ -1,49 +1,65 @@
-# VisionPark
+# VisionPark: Automated Parking Management System
+[visionpark.vercel.app](https://visionpark.vercel.app/)
 
-An intelligent, edge-to-cloud automated parking management system that utilizes computer vision for license plate recognition, coupled with a real-time responsive web dashboard.
+## Media & Demonstration
 
-## Media / Demo
+[Insert Video Demo Here]
 
-<!-- ⚠️ REPLACE THE PLACEHOLDERS BELOW WITH YOUR OWN VIDEOS AND IMAGES ⚠️ -->
+**Dashboard Screenshots:**
+<img width="1897" height="1078" alt="Image" src="https://github.com/user-attachments/assets 02cfa2cc-06de-4fab-9894-d30ab63aba86" />
 
-### System Demo
-*[Insert Video Demo Here]*
-
-### Dashboard Screenshots
-| Active Parking View | Worker Approval Panel |
-| :---: | :---: |
-| *[Insert Image Here]* | *[Insert Image Here]* |
+<img width="1897" height="1078" alt="Image" src="https://github.com/user-attachments/assets/5dbaa796-1971-4854-8ec7-25417d2303a6" />
 
 ---
 
-## Overall Project Description
+## What is VisionPark?
 
-VisionPark is designed to modernize parking lots by replacing manual ticketing with an automated, image-processing-based pipeline. It captures vehicle license plates upon entry and exit, records timestamps, and automatically computes parking fees based on vehicle type (e.g., motorcycles vs. cars).
+VisionPark is a smart parking system designed to replace traditional paper parking tickets. Instead of handing out tickets, VisionPark uses a camera at the gate to automatically read a vehicle's license plate when it enters and when it leaves. 
 
-The system is built with a **"Human-in-the-Loop"** philosophy. Recognizing that AI Optical Character Recognition (OCR) is not always 100% accurate, VisionPark uses a smart buffering system. When a car arrives, the AI's guess is placed into a "Pending" queue where an on-site worker can quickly verify or correct the read before it is published to the live parking database.
+The system tracks exactly how long a car has been parked and automatically calculates the parking fee based on the vehicle type (such as a motorcycle versus a car). It features a live website where anyone can check parking status, and a secure control panel for parking attendants to manage entries and exits.
 
-## How It Works
+## Key Features
 
-1. **Edge Detection (The Gate):** A camera connected to an edge device (like a Raspberry Pi 4) captures incoming and outgoing vehicles. A local Python script intelligently crops the image to isolate the license plate, minimizing processing overhead.
-2. **Local AI Processing:** A lightweight YOLO model (YOLOv8-Nano) runs locally on the edge device to detect the bounding box of the plate, and Tesseract OCR extracts the characters. Keeping the heavy image processing off the cloud ensures the system remains fast and resilient against internet fluctuations.
-3. **The "Pending" Buffer:** The raw text data and detection confidence are sent to the cloud database. Instead of directly registering the car, it goes into a pending state to prevent ghost entries or OCR typos.
-4. **Worker Validation & Shift Sessions:** Parking attendants (logged in via a Shift Handover protocol to ensure data is tied to the correct operator) see the pending car instantly pop up on their dashboard via WebSockets. They verify the vehicle type, correct any AI typos, and hit "Approve & Publish."
-5. **Live Dashboard & Real-time Sync:** Once approved, the car enters the "Active Parking" table. The Next.js dashboard acts as a public-facing monitor where anyone (even unauthenticated drivers) can view parked cars, time elapsed, and current fees in real-time.
-6. **Checkout & Exit:** Upon exit, the system fuzzy-matches the exiting plate against active cars, calculates the final fee based on duration and vehicle type, and logs the historical record for administrative analytics. Admins can later download CSV reports of shift and revenue data.
+* **Ticketless Parking:** Cameras automatically capture license plates, eliminating the need for paper tickets and reducing physical waste.
+* **Live Public Dashboard:** A real-time monitor that anyone can view to see which cars are parked, how long they have been there, and their current parking fee.
+* **Smart Worker Verification:** Because camera AI isn't always perfect, the system holds the camera's guess on a private screen. A human worker quickly double-checks the license plate for typos before officially logging the car into the system.
+* **Automated Fee Calculation:** The system instantly calculates the final cost when a car leaves based on its specific vehicle type and total time parked.
+* **Shift Management:** Workers can clock in and clock out, ensuring that all parking approvals and payments are securely tracked to the correct attendant.
+
+---
+
+## How to Use VisionPark
+
+The system is designed for three different types of users:
+
+### 1. For Drivers (Public Access)
+* **No login is required.**
+* Simply open the VisionPark website on your phone or computer.
+* You will see the "Live Parking Status" table. This updates instantly and shows all cars currently in the lot, their entry time, and the current running cost of their parking stay.
+
+### 2. For Parking Attendants (Workers)
+* **Starting a Shift:** Log in with your worker account and click the button to start your shift. 
+* **Approving Entries:** When a car arrives at the gate, the camera will take a picture and guess the license plate. This guess will immediately pop up on your screen. You look at the car, verify the license plate is correct (or fix any typos), confirm the vehicle type, and click "Approve & Publish".
+* **Processing Exits:** When a car leaves, the camera captures it again. The system will match it to the parked car and show you the final fee. You collect the payment and click approve to finalize the checkout.
+
+### 3. For Administrators
+* Log in with your admin account to access the private Admin Panel.
+* From here, you can view the complete history of all cars that have entered and exited the lot.
+* You can track worker shifts and download spreadsheet reports of the parking data for record-keeping and financial tracking.
+
+---
+
+## How the System Works (Behind the Scenes)
+
+1. **The Camera:** A small computer (Raspberry Pi) and camera placed at the parking gate watch for cars.
+2. **The Smart Guess:** When a car passes, the camera crops the image to find the license plate and tries to read the text locally using AI (YOLO & Tesseract OCR).
+3. **The Buffer:** The system sends this text to the worker's dashboard as a "Pending" vehicle. It does not go public yet.
+4. **Human Approval:** The worker confirms the text is correct. This prevents the system from saving bad data if the camera misread a dirty or blurry license plate.
+5. **Going Live:** Once the worker clicks approve, the car is officially logged into the database and appears on the public live dashboard for everyone to see.
+
+---
 
 ## Technologies Used
-
-### Frontend (Web Dashboard)
-* **Next.js (App Router):** The core React framework for building the dynamic user interface.
-* **Tailwind CSS:** Used for responsive styling, featuring a custom "Traffic Light" theme and modern glassmorphism UI components.
-* **Clerk:** Handles secure user authentication, organization management (Worker vs. Admin roles), and secure session states.
-
-### Backend & Database
-* **FastAPI (Python):** A high-performance REST API backend handling business logic, worker shifts, and intelligent checkout routing.
-* **Supabase:** The core PostgreSQL database. Utilizes **Supabase Realtime (WebSockets)** to instantly push camera detections to the frontend without heavy API polling, and **Row Level Security (RLS)** to protect backend endpoints based on Clerk user roles.
-
-### Edge Processing (Hardware & AI)
-* **Raspberry Pi / Edge Hardware:** The edge computing hardware managing the camera feeds and local logic in outdoor conditions.
-* **Ultralytics YOLOv8:** A highly optimized object detection model trained to identify license plates locally.
-* **PyTesseract (Tesseract OCR):** Extracts the alphanumeric characters from the cropped license plate images.
-* **OpenCV:** For image manipulation and frame processing.
+* **Frontend:** Next.js, Tailwind CSS (Custom Glassmorphism & Traffic Light themes), Clerk (Authentication)
+* **Backend:** FastAPI (Python), Supabase (PostgreSQL database with Realtime WebSockets)
+* **Edge Hardware & AI:** Raspberry Pi 4, Ultralytics YOLOv8 (Object Detection), PyTesseract (OCR), OpenCV
