@@ -8,7 +8,7 @@
 <div align="center">
   <h2>Media & Demonstration</h2>
   
-  <img width="800" alt="VisionPark Demo" src="YOUR_GIF_LINK_HERE" />
+  <img width="800" alt="VisionPark Demo" src="https://github.com/wyllg/visionpark/blob/8f4623c0d728ccf0e826b5d506bb8449fbcfa6e5/demovid.gif" />
   
   <br><br>
   
