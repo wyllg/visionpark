@@ -7,12 +7,17 @@
 
 <div align="center">
   <h2>Media & Demonstration</h2>
-  https://github.com/wyllg/visionpark/blob/e09dc17ba47dbe2f7e325aa8a593437ec85e5515/Demo.mp4
+  
+  <video width="800" controls>
+    <source src="https://github.com/wyllg/visionpark/blob/e09dc17ba47dbe2f7e325aa8a593437ec85e5515/Demo.mp4?raw=true" type="video/mp4">
+  </video>
+  
+  <br><br>
   
   <h3>Dashboard Screenshots:</h3>
-  <img width="800" alt="Admin Dashboard" src="https://github.com/wyllg/visionpark/blob/e09dc17ba47dbe2f7e325aa8a593437ec85e5515/AdminScreen.png" />
+  <img width="800" alt="Admin Dashboard" src="https://github.com/wyllg/visionpark/blob/e09dc17ba47dbe2f7e325aa8a593437ec85e5515/AdminScreen.png?raw=true" />
   <br><br>
-  <img width="800" alt="Worker Approval Screen" src="https://github.com/wyllg/visionpark/blob/e09dc17ba47dbe2f7e325aa8a593437ec85e5515/WorkerScreen.png" />
+  <img width="800" alt="Worker Approval Screen" src="https://github.com/wyllg/visionpark/blob/e09dc17ba47dbe2f7e325aa8a593437ec85e5515/WorkerScreen.png?raw=true" />
 </div>
 
 ---
