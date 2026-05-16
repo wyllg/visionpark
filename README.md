@@ -9,7 +9,7 @@
   <h2>Media & Demonstration</h2>
   
   <video width="800" controls>
-    <source src="https://github.com/wyllg/visionpark/blob/e09dc17ba47dbe2f7e325aa8a593437ec85e5515/Demo.mp4?raw=true" type="video/mp4">
+    <source src="https://github.com/user-attachments/assets/802ec9f9-c8b5-4153-ba32-d750fdd58def" type="video/mp4">
   </video>
   
   <br><br>
