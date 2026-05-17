@@ -96,11 +96,11 @@ return (
 
     {/* DESKTOP COLUMN HEADERS */}
     {vehicles.length > 0 && (
-      <div className="hidden md:grid grid-cols-[minmax(0,1fr)_minmax(0,1fr)_minmax(0,1fr)_minmax(0,1fr)_minmax(0,1fr)_80px] gap-x-4 px-3.5 pb-2 shrink-0">
+      <div className="hidden md:grid grid-cols-[minmax(0,1fr)_minmax(0,1fr)_minmax(0,1fr)_minmax(0,1fr)_minmax(0,1fr)_100px] gap-x-4 px-3.5 pb-2 shrink-0">
         {["Plate","Type", "Time in", "Time out", "Total time"].map(h => (
-          <span key={h} className="text-[11px] font-semibold uppercase tracking-widest text-slate-400">{h}</span>
+          <span key={h} className="text-[11px] font-semibold  uppercase tracking-widest text-slate-400">{h}</span>
         ))}
-        <span className="text-[11px] font-semibold uppercase tracking-widest text-slate-400 text-right">Paid</span>
+        <span className="text-[11px] font-semibold uppercase tracking-widest pr-4.5 text-slate-400 text-right">Paid</span>
       </div>
     )}
 

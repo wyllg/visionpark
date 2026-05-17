@@ -130,9 +130,9 @@ export default function ActiveParkingTable() {
 
       {/* DESKTOP COLUMN HEADERS */}
       {vehicles.length > 0 && (
-        <div className="hidden md:grid grid-cols-[minmax(0,1fr)_minmax(0,1fr)_minmax(0,1fr)_minmax(0,1fr)_minmax(0,1fr)_80px] gap-x-4 px-3.5 pb-2 shrink-0">
+        <div className="hidden md:grid grid-cols-[minmax(0,1fr)_minmax(0,1fr)_minmax(0,1fr)_minmax(0,1fr)_minmax(0,1fr)_100px] gap-x-4 px-3.5 pb-2 shrink-0">
           {["Plate", "Type", "Date", "Time In", "Elapsed", "Fee"].map((h, i) => (
-            <span key={h} className={`text-[11px] font-semibold uppercase tracking-widest text-slate-400 ${i === 5 ? "text-right" : ""}`}>
+            <span key={h} className={`text-[11px] font-semibold pr-4.5 uppercase tracking-widest text-slate-400 ${i === 5 ? "text-right" : ""}`}>
               {h}
             </span>
           ))}
