@@ -70,7 +70,14 @@ export default function ExitedParkingTable() {
     return `${hours}h ${minutes}m`;
   }
 
-  if (isLoading) return <div className="p-8 text-center animate-pulse">Loading Archive...</div>;
+  if (isLoading) {
+    return (
+      // Notice this uses the exact same 'w-full pt-7 h-[500px]' wrapper as the real table!
+      <div className="w-full pt-7 h-[500px] flex flex-col items-center justify-center border border-dashed border-moon/10 rounded-xl">
+        <div className="animate-pulse text-moon/70 font-medium">Loading Archive...</div>
+      </div>
+    );
+  }
 
 return (
   <div className="w-full pt-7 h-[500px] flex flex-col">
