@@ -156,7 +156,7 @@ export default function AdminPanel() {
           
           <div className="p-4 bg-ocean/20 rounded-xl border border-ocean/50 flex flex-col justify-center">
             <div className="flex items-center gap-2 text-moon-light font-semibold mb-2">
-              <Car className="w-4 h-4 text-mustard" /> Active Cars
+              <Car className="w-4 h-4 text-mustard" /> Active Vehicles
             </div>
             <p className="text-2xl text-mustard font-bold">
               {stats.activeCars}
@@ -165,7 +165,7 @@ export default function AdminPanel() {
           
           <div className="p-4 bg-ocean/20 rounded-xl border border-ocean/50 flex flex-col justify-center">
             <div className="flex items-center gap-2 text-moon-light font-semibold mb-2">
-              <LogOut className="w-4 h-4 text-cherry" /> Cars Exited Today
+              <LogOut className="w-4 h-4 text-cherry" /> Vehicles Exited Today
             </div>
             <p className="text-2xl text-cherry font-bold">
               {stats.todaysExits}

@@ -13,6 +13,11 @@ export default function ActiveParkingTable() {
     if (status === 'Active') return 'badge-active text-green-400 bg-green-400/10 border-green-400/20';
   };
 
+  const getVehicleType = (vehicle_type) => {
+    if (vehicle_type === 'Car') return 'text-ocean-light bg-ocean/10 border-ocean/80';
+    if (vehicle_type === 'Motor') return ' text-mustard-light bg-mustard/10 border-mustard/50';
+  }
+
   useEffect(() => {
     const fetchParkingData = async () => {
       try {
@@ -58,7 +63,7 @@ export default function ActiveParkingTable() {
   useEffect(() => {
     const clockInterval = setInterval(() => {
       setCurrentTime(new Date());
-    }, 1000); 
+    }, 60000); 
     return () => clearInterval(clockInterval);
   }, []);
 
@@ -103,7 +108,7 @@ export default function ActiveParkingTable() {
   if (isLoading) return <div className="p-8 text-center animate-pulse text-moon">Loading Live Status...</div>;
 
   return (
-    <div className="w-full pt-7">
+    <div className="w-full pt-7 min-h-[400px]">
 
       {/* HEADER */}
       <div className="w-full flex justify-between items-center pb-4 border-b border-moon/10 mb-4">
@@ -118,9 +123,9 @@ export default function ActiveParkingTable() {
 
       {/* DESKTOP COLUMN HEADERS */}
       {vehicles.length > 0 && (
-        <div className="hidden md:grid grid-cols-7 gap-x-4 px-3.5 pb-2">
-          {["Plate", "Type", "Date", "Time In", "Elapsed", "Status", "Fee"].map((h, i) => (
-            <span key={h} className={`text-[11px] font-semibold uppercase tracking-widest text-slate-400 ${i === 6 ? "text-right" : ""}`}>
+        <div className="hidden md:grid grid-cols-[minmax(0,1fr)_minmax(0,1fr)_minmax(0,1fr)_minmax(0,1fr)_minmax(0,1fr)_80px] gap-x-4 px-3.5 pb-2">
+          {["Plate", "Type", "Date", "Time In", "Elapsed", "Fee"].map((h, i) => (
+            <span key={h} className={`text-[11px] font-semibold uppercase tracking-widest text-slate-400 ${i === 5 ? "text-right" : ""}`}>
               {h}
             </span>
           ))}
@@ -139,7 +144,7 @@ export default function ActiveParkingTable() {
               {/* DESKTOP ROW */}
               <div className="
                 hidden md:grid
-                grid-cols-7
+                grid-cols-[minmax(0,1fr)_minmax(0,1fr)_minmax(0,1fr)_minmax(0,1fr)_minmax(0,1fr)_80px]
                 gap-x-4 items-center
                 px-3.5 py-2.5 rounded-lg
                 border border-transparent
@@ -149,8 +154,10 @@ export default function ActiveParkingTable() {
                 <span className="font-mono text-sm font-bold text-moon tracking-wide">
                   {car.plate_number}
                 </span>
-                <span className="text-sm text-moon/80 capitalize">
-                  {car.vehicle_type || 'Car'}
+                <span>
+                  <span className={`px-2 py-0.5 rounded text-xs border ${getVehicleType(car.vehicle_type)}`}>
+                    {car.vehicle_type}
+                  </span>
                 </span>
                 <span className="text-sm text-moon">
                   {new Date(car.time_in).toLocaleDateString([], { month: 'long', day: '2-digit', year: 'numeric' })}
@@ -160,11 +167,6 @@ export default function ActiveParkingTable() {
                 </span>
                 <span className="text-sm font-medium text-moon">
                   {elapsedTime(car.time_in, car.time_out)}
-                </span>
-                <span>
-                  <span className={`px-2 py-0.5 rounded text-xs border ${getBadgeClass(car.status)}`}>
-                    {car.status}
-                  </span>
                 </span>
                 <span className="text-sm font-bold text-green-400 text-right">
                   ₱{calculateFee(car.time_in, car.time_out, car.vehicle_type)}
@@ -184,8 +186,8 @@ export default function ActiveParkingTable() {
                   <span className="font-mono text-base font-bold text-moon tracking-wide">
                     {car.plate_number}
                   </span>
-                  <span className="text-[10px] px-1.5 py-0.5 rounded bg-slate/50 text-moon/70 border border-moon/10 capitalize">
-                    {car.vehicle_type || 'Car'}
+                  <span className={`text-[10px] px-1.5 py-0.5 rounded ${getVehicleType(car.vehicle_type)}`}>
+                    {car.vehicle_type}
                   </span>
                 </div>
                 

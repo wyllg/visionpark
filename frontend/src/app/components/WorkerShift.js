@@ -38,7 +38,7 @@ export default function WorkerShift({ onApprove }) {
 
     channel.on(
       'postgres_changes',
-      { event: '*', schema: 'public', table: 'workershift '}, // Note: watch out for the space in 'workershift '
+      { event: '*', schema: 'public', table: 'workershift'}, // Note: watch out for the space in 'workershift '
       (payload) => {
         console.log('Global database change detected! Refreshing Worker Table');
         fetchActiveShift();
@@ -93,7 +93,7 @@ export default function WorkerShift({ onApprove }) {
     }
   };
 
-  if (!isLoaded || loading) return <div className="p-4 flex flex-col justify-center items-center">Loading Gate Status...</div>;
+  if (!isLoaded || loading) return <div className="p-4 flex flex-col justify-center items-center animate-pulse">.</div>;
 
   // ==========================================
   // STATE 1: NO ONE IS CLOCKED IN

@@ -2,14 +2,14 @@
 
 import { Show } from '@clerk/nextjs';
 import React from 'react'
-import { useUser, useAuth } from '@clerk/nextjs';
+import { useUser } from '@clerk/nextjs';
+import { Car, Bike } from 'lucide-react'; // <-- 1. Import icons
 
 export default function Hero() {
-
   const { isLoaded: isUserLoaded, user } = useUser();
 
   return (
-    <div className=''>
+    <div className='w-full'>
 
       {/* LOGO CONTAINER */}
       <div className="flex flex-col items-center">
@@ -62,20 +62,58 @@ export default function Hero() {
       </div>
     
       {/* TITLE */}
-      <div className="flex flex-col items-center justify-center text-5xl pb-4">
+      <div className="flex flex-col items-center justify-center text-5xl pb-1">
         <h1 className="">VisionPark</h1>
       </div>
       
       {/* WELCOME MESSAGE IF LOGGED IN */}
       <Show when="signed-in">
-        <div className="pb-4">
-          <div className="flex flex-col items-center gap-2 ">
+        <div className="pb-3">
+          <div className="flex flex-col items-center gap-2 text-moon/80">
             <p><strong>Hi, </strong> {user?.firstName} {user?.lastName}</p>
           </div>
         </div>
       </Show>
 
+      {/* NEW PRICING SECTION */}
+      <div className="flex flex-col items-center justify-center pt-4 pb-8">
+        
+        {/* Pills Container */}
+        {/* NEW PRICING SECTION - COMPACT */}
+      <div className="flex flex-col items-center justify-center pb-8">
+        <p className="text-[10px] text-moon/50 uppercase tracking-[0.2em] font-semibold mb-3">
+          Hourly Rates:
+        </p>
+        
+        {/* Pills Container (Forced side-by-side on mobile) */}
+        <div className="flex flex-row items-center gap-3">
+          
+          {/* Car Pill */}
+          <div className="flex items-center gap-2 px-3 py-1.5 bg-slate-800/40 backdrop-blur-md border border-slate-700/50 rounded-full shadow-md transition-all hover:bg-slate-800/60 hover:scale-105">
+            <div className="bg-ocean/20 p-1 rounded-full">
+              <Car className="w-3.5 h-3.5 text-ocean" />
+            </div>
+            <div className="flex items-baseline gap-1">
+              <span className="text-moon font-bold text-sm">₱30</span>
+              <span className="text-moon/50 text-[10px] uppercase tracking-wider">/ hr</span>
+            </div>
+          </div>
+
+          {/* Motorcycle Pill */}
+          <div className="flex items-center gap-2 px-3 py-1.5 bg-slate-800/40 backdrop-blur-md border border-slate-700/50 rounded-full shadow-md transition-all hover:bg-slate-800/60 hover:scale-105">
+            <div className="bg-mustard/20 p-1 rounded-full">
+              <Bike className="w-3.5 h-3.5 text-mustard" />
+            </div>
+            <div className="flex items-baseline gap-1">
+              <span className="text-moon font-bold text-sm">₱15</span>
+              <span className="text-moon/50 text-[10px] uppercase tracking-wider">/ hr</span>
+            </div>
+          </div>
+          
+        </div>
+      </div>
+      </div>
+
     </div>
   )
 }
-

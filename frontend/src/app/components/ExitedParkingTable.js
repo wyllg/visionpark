@@ -8,6 +8,11 @@ export default function ExitedParkingTable() {
   const [vehicles, setVehicles] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
 
+  const getVehicleType = (vehicle_type) => {
+    if (vehicle_type === 'Car') return 'text-ocean-light bg-ocean/10 border-ocean/80';
+    if (vehicle_type === 'Motor') return ' text-mustard-light bg-mustard/10 border-mustard/50';
+  }
+
   // 1. Fetch the EXITED data from FastAPI
   useEffect(() => {
     const fetchParkingData = async () => {
@@ -68,7 +73,7 @@ export default function ExitedParkingTable() {
   if (isLoading) return <div className="p-8 text-center animate-pulse">Loading Archive...</div>;
 
 return (
-  <div className="w-full pt-7">
+  <div className="w-full pt-7 min-h-[400px]">
 
     {/* HEADER */}
     <div className="w-full flex justify-between items-center pb-4 border-b border-moon/10 mb-4">
@@ -83,8 +88,8 @@ return (
 
     {/* DESKTOP COLUMN HEADERS */}
     {vehicles.length > 0 && (
-      <div className="hidden md:grid grid-cols-[minmax(0,1.4fr)_minmax(0,1fr)_minmax(0,1fr)_minmax(0,1fr)_80px] gap-x-4 px-3.5 pb-2">
-        {["Plate", "Time in", "Time out", "Total time"].map(h => (
+      <div className="hidden md:grid grid-cols-[minmax(0,1fr)_minmax(0,1fr)_minmax(0,1fr)_minmax(0,1fr)_minmax(0,1fr)_80px] gap-x-4 px-3.5 pb-2">
+        {["Plate","Type", "Time in", "Time out", "Total time"].map(h => (
           <span key={h} className="text-[11px] font-semibold uppercase tracking-widest text-slate-400">{h}</span>
         ))}
         <span className="text-[11px] font-semibold uppercase tracking-widest text-slate-400 text-right">Paid</span>
@@ -104,7 +109,7 @@ return (
             {/* DESKTOP ROW */}
             <div className="
               hidden md:grid
-              grid-cols-[minmax(0,1.4fr)_minmax(0,1fr)_minmax(0,1fr)_minmax(0,1fr)_80px]
+              grid-cols-[minmax(0,1fr)_minmax(0,1fr)_minmax(0,1fr)_minmax(0,1fr)_minmax(0,1fr)_80px]
               gap-x-4 items-center
               px-3.5 py-2.5 rounded-lg
               border border-transparent
@@ -113,6 +118,11 @@ return (
             ">
               <span className="font-mono text-sm font-bold text-moon tracking-wide">
                 {car.plate_number}
+              </span>
+              <span>
+                <span className={`px-2 py-0.5 rounded text-xs border ${getVehicleType(car.vehicle_type)}`}>
+                  {car.vehicle_type}
+                </span>
               </span>
               <span className="text-sm text-moon">
                 {new Date(car.time_in).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
@@ -137,9 +147,14 @@ return (
               transition-colors
             ">
               {/* col 1 top: plate */}
-              <span className="font-mono text-base font-bold text-moon tracking-wide">
-                {car.plate_number}
-              </span>
+              <div className="flex items-center gap-2">
+                  <span className="font-mono text-base font-bold text-moon tracking-wide">
+                    {car.plate_number}
+                  </span>
+                  <span className={`text-[10px] px-1.5 py-0.5 rounded ${getVehicleType(car.vehicle_type)}`}>
+                    {car.vehicle_type}
+                  </span>
+                </div>
               {/* col 2 top: amount paid */}
               <span className="text-sm font-bold text-cherry text-right">
                 ₱{car.total_fee?.toFixed(2) || '0.00'}

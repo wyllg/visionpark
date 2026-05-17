@@ -6,7 +6,7 @@ import { supabase } from '../../lib/supabase';
 
 // CONFIGURATION
 const CONFIDENCE_THRESHOLD = 90; // Minimum score to trigger auto-approve
-const AUTO_APPROVE_DELAY_MS = 600000; // 60 seconds
+const AUTO_APPROVE_DELAY_MS = 180000; // 3 mins
 
 export default function EntranceApproval({ onApprove }) {
   const [pendingCars, setPendingCars] = useState([]);
