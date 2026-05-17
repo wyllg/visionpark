@@ -108,8 +108,8 @@ export default function page() {
       </div>
 
       {/* Barely-there hint */}
-      <p className="text-center font-mono text-[9px] tracking-[0.4em] text-[var(--color-slate-light)] opacity-20 select-none mt-20">
-        ↑ ↑ ↓ ↓
+      <p className="text-center font-mono text-[12px] tracking-[0.4em] text-[var(--color-slate-light)] opacity-20 select-none mt-20">
+        ↑ ↑ ↓ ↓ ← → ← → B A
       </p>
 
       {/* Easter egg popup */}
