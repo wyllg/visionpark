@@ -73,10 +73,11 @@ export default function ExitedParkingTable() {
   if (isLoading) return <div className="p-8 text-center animate-pulse">Loading Archive...</div>;
 
 return (
-  <div className="w-full pt-7 min-h-[400px]">
+  <div className="w-full pt-7 h-[500px] flex flex-col">
 
     {/* HEADER */}
-    <div className="w-full flex justify-between items-center pb-4 border-b border-moon/10 mb-4">
+    {/* 2. SHRINK-0: Prevents the header from getting squished by the scrolling list */}
+    <div className="w-full flex justify-between items-center pb-4 border-b border-moon/10 mb-4 shrink-0">
       <h2 className="flex items-center gap-2.5 text-base sm:text-lg font-semibold text-moon">
         <LogOut className="w-4.5 h-4.5 text-cherry flex-shrink-0" />
         Exited Cars
@@ -88,7 +89,7 @@ return (
 
     {/* DESKTOP COLUMN HEADERS */}
     {vehicles.length > 0 && (
-      <div className="hidden md:grid grid-cols-[minmax(0,1fr)_minmax(0,1fr)_minmax(0,1fr)_minmax(0,1fr)_minmax(0,1fr)_80px] gap-x-4 px-3.5 pb-2">
+      <div className="hidden md:grid grid-cols-[minmax(0,1fr)_minmax(0,1fr)_minmax(0,1fr)_minmax(0,1fr)_minmax(0,1fr)_80px] gap-x-4 px-3.5 pb-2 shrink-0">
         {["Plate","Type", "Time in", "Time out", "Total time"].map(h => (
           <span key={h} className="text-[11px] font-semibold uppercase tracking-widest text-slate-400">{h}</span>
         ))}
@@ -97,7 +98,8 @@ return (
     )}
 
     {/* LIST */}
-    <div className="space-y-px">
+    {/* 3. OVERFLOW-Y-AUTO & FLEX-1: Takes up remaining space and scrolls internally! */}
+    <div className="space-y-px overflow-y-auto flex-1 pr-2 custom-scrollbar">
       {vehicles.length === 0 ? (
         <div className="py-10 text-center text-slate-400 italic text-sm">
           No cars have exited yet.

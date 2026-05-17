@@ -108,10 +108,11 @@ export default function ActiveParkingTable() {
   if (isLoading) return <div className="p-8 text-center animate-pulse text-moon">Loading Live Status...</div>;
 
   return (
-    <div className="w-full pt-7 min-h-[400px]">
+    <div className="w-full pt-7 h-[500px] flex flex-col">
 
       {/* HEADER */}
-      <div className="w-full flex justify-between items-center pb-4 border-b border-moon/10 mb-4">
+      {/* 2. SHRINK-0: Prevents the header from getting squished by the scrolling list */}
+      <div className="w-full flex justify-between items-center pb-4 border-b border-moon/10 mb-4 shrink-0">
         <h2 className="flex items-center gap-2.5 text-base sm:text-lg font-semibold text-moon">
           <Activity className="w-4.5 h-4.5 text-mustard flex-shrink-0" />
           Active Parking
@@ -123,17 +124,18 @@ export default function ActiveParkingTable() {
 
       {/* DESKTOP COLUMN HEADERS */}
       {vehicles.length > 0 && (
-        <div className="hidden md:grid grid-cols-[minmax(0,1fr)_minmax(0,1fr)_minmax(0,1fr)_minmax(0,1fr)_minmax(0,1fr)_80px] gap-x-4 px-3.5 pb-2">
+        <div className="hidden md:grid grid-cols-[minmax(0,1fr)_minmax(0,1fr)_minmax(0,1fr)_minmax(0,1fr)_minmax(0,1fr)_80px] gap-x-4 px-3.5 pb-2 shrink-0">
           {["Plate", "Type", "Date", "Time In", "Elapsed", "Fee"].map((h, i) => (
             <span key={h} className={`text-[11px] font-semibold uppercase tracking-widest text-slate-400 ${i === 5 ? "text-right" : ""}`}>
               {h}
             </span>
           ))}
         </div>
-)}
+      )}
 
       {/* LIST */}
-      <div className="space-y-px">
+      {/* 3. OVERFLOW-Y-AUTO & FLEX-1: This is the magic. It takes up the remaining space and scrolls internally! */}
+      <div className="space-y-px overflow-y-auto flex-1 pr-2 custom-scrollbar">
         {vehicles.length === 0 ? (
           <div className="py-10 text-center text-slate-400 italic text-sm">
             Lot is currently empty.
@@ -199,7 +201,7 @@ export default function ActiveParkingTable() {
                 {/* col 1 bottom: time · elapsed */}
                 <div className="flex items-center gap-2 mt-3">
                   <span className="text-xs text-moon/80">
-                    In: {new Date(car.time_in).toLocaleTimeString([], { month: 'long', day: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' })}
+                    In: {new Date(car.time_in).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                   </span>
                   <span className="text-ocean text-xs">·</span>
                   <span className="text-xs text-moon/80">
@@ -215,6 +217,7 @@ export default function ActiveParkingTable() {
                 </div>
               </div>
 
+              {/* Divider */}
               {idx < vehicles.length - 1 && (
                 <div className="h-px bg-moon/5 mx-3" />
               )}

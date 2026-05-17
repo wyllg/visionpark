@@ -4,12 +4,25 @@
 'use client';
 
 import { useUser, useAuth, useOrganization } from '@clerk/nextjs';
-import ActiveParkingTable from './components/ActiveParkingTable';
-import ExitedParkingTable from './components/ExitedParkingTable';
 import WorkerShift from './components/WorkerShift';
 import Hero from './components/Hero';
 import AdminPanel from './components/AdminPanel';
 import Footer from "./footer";
+
+// ADD THESE
+import dynamic from 'next/dynamic';
+
+// This tells Next.js: "Do not send the JS for these tables immediately. 
+// Show a loading text while you fetch the script in the background."
+const ActiveParkingTable = dynamic(() => import('./components/ActiveParkingTable'), {
+  ssr: false, // Disables server-rendering for this specific heavy component
+  loading: () => <div className="h-[500px] flex items-center justify-center text-moon animate-pulse">Loading Live Gate...</div>
+});
+
+const ExitedParkingTable = dynamic(() => import('./components/ExitedParkingTable'), {
+  ssr: false,
+  loading: () => <div className="h-[500px] flex items-center justify-center text-moon animate-pulse">Loading History...</div>
+});
 
 export default function YourComponent() {
 
