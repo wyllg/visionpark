@@ -7,7 +7,9 @@ import { useUser, useAuth, useOrganization } from '@clerk/nextjs';
 import WorkerShift from './components/WorkerShift';
 import Hero from './components/Hero';
 import AdminPanel from './components/AdminPanel';
+import PlateSearch from './components/PlateSearch';
 import Footer from "./footer";
+
 
 // ADD THESE
 import dynamic from 'next/dynamic';
@@ -72,6 +74,14 @@ export default function YourComponent() {
           {orgName === 'admin' && (
             <div className='w-full max-w-6xl mx-auto space-y-6 rounded-3xl pb-5'>
               <AdminPanel/>
+              <div className='flex flex-col space-y-4'>
+                <div className='w-full max-w-6xl mx-auto space-y-6 rounded-3xl pb-5'>
+                  <ActiveParkingTable/>
+                </div>
+                <div className='w-full max-w-6xl mx-auto space-y-6 rounded-3xl pb-5'>
+                  <ExitedParkingTable/>
+                </div>
+              </div>
             </div>
           )}
 
@@ -79,6 +89,14 @@ export default function YourComponent() {
           {orgName === 'worker' && (
             <div className='w-full max-w-6xl mx-auto space-y-6 rounded-3xl pb-5'>
               <WorkerShift/>
+              <div className='flex flex-col space-y-4'>
+                <div className='w-full max-w-6xl mx-auto space-y-6 rounded-3xl pb-5'>
+                  <ActiveParkingTable/>
+                </div>
+                <div className='w-full max-w-6xl mx-auto space-y-6 rounded-3xl pb-5'>
+                  <ExitedParkingTable/>
+                </div>
+              </div>
             </div>
           )}
 
@@ -86,13 +104,8 @@ export default function YourComponent() {
       )}
 
       {/* ANYONE CAN VIEW THIS EVEN IF THEY ARE NOT LOGGED IN */}
-      <div className='flex flex-col space-y-4'>
-        <div className='w-full max-w-6xl mx-auto space-y-6 rounded-3xl pb-5'>
-          <ActiveParkingTable/>
-        </div>
-        <div className='w-full max-w-6xl mx-auto space-y-6 rounded-3xl pb-5'>
-          <ExitedParkingTable/>
-        </div>
+      <div className='w-full max-w-6xl mx-auto space-y-6 rounded-3xl pb-5 mb-15'>
+         <PlateSearch />
       </div>
 
       <Footer />

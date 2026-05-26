@@ -6,7 +6,7 @@ import { supabase } from '../../lib/supabase';
 
 export default function ExitApproval({ onApprove }) {
   const [pendingCars, setPendingCars] = useState([]);
-  const [activeCars, setActiveCars] = useState([]); // <-- NEW: Stores active cars for live matching
+  const [activeCars, setActiveCars] = useState([]); 
   const { user } = useUser();
 
   // --- NEW STATE FOR MANUAL EXIT ---
@@ -122,6 +122,39 @@ export default function ExitApproval({ onApprove }) {
     setPendingCars(prev => prev.map(car => car.id === id ? { ...car, raw_plate_read: newText } : car));
   };
 
+  // --- NEW: DENY EXIT LOGIC ---
+  const denyApprove = async (id, currentPlate) => {
+    const isConfirmed = window.confirm(
+      `Are you sure you want to dismiss this exit reading for plate: ${currentPlate || "this vehicle"}?`
+    );
+    
+    if (!isConfirmed) {
+      return; 
+    }
+
+    try {
+      const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL || '';
+      const res = await fetch(`${baseUrl}/api/parking/deny/exit`, {
+        method: 'DELETE', 
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ 
+          id, 
+          plate_number: currentPlate || "Unknown", 
+          worker_id: user?.fullName || user?.firstName || "Unknown Worker",
+        }),
+      });
+
+      const result = await res.json();
+      if (result.status === 'success') {
+        setPendingCars(prev => prev.filter(car => car.id !== id));
+      } else {
+        alert(`Failed to dismiss: ${result.message}`);
+      }
+    } catch (error) {
+      console.error("Denial failed", error);
+    }
+  };
+
   // --- NEW: Submit Manual Exit ---
   const handleManualSubmit = async () => {
     if (!manualPlate.trim()) return;
@@ -227,19 +260,27 @@ export default function ExitApproval({ onApprove }) {
                         type="text"
                         value={car.raw_plate_read}
                         onChange={(e) => handleInputChange(car.id, e.target.value)}
-                        className={`uppercase border-2 font-bold rounded px-2 py-1 text-moon focus:outline-none w-32 ${matchedActiveCar ? 'border-ocean focus:border-go' : 'border-mustard focus:border-cherry-dark'}`}
+                        className={`uppercase border-2 font-bold rounded px-2 py-1 text-moon focus:outline-none w-32 ${matchedActiveCar ? 'border-ocean focus:border-go' : 'border-mustard focus:border-cherry-dark'} bg-slate-800`}
                       />
                     </div>
                   </div>
                   
-                  {/* Smart Checkout Button */}
-                  <button 
-                    disabled={!matchedActiveCar} // Locks the button until a match is found!
-                    onClick={() => handleApprove(car.id, car.raw_plate_read)}
-                    className={`font-bold py-2 px-4 rounded text-sm transition ${matchedActiveCar ? 'bg-ocean hover:bg-ocean-dark text-moon shadow-lg' : 'bg-cherry/50 text-moon/40 cursor-not-allowed'}`}
-                  >
-                    Checkout
-                  </button>
+                  {/* Smart Checkout & X Button Wrapper */}
+                  <div className="flex flex-row gap-2">
+                    <button 
+                      disabled={!matchedActiveCar} // Locks the button until a match is found!
+                      onClick={() => handleApprove(car.id, car.raw_plate_read)}
+                      className={`font-bold py-2 px-3 sm:px-4 rounded text-xs sm:text-sm transition ${matchedActiveCar ? 'bg-ocean hover:bg-ocean-dark text-moon shadow-lg' : 'bg-cherry/50 text-moon/40 cursor-not-allowed'}`}
+                    >
+                      Checkout
+                    </button>
+                    <button 
+                      onClick={() => denyApprove(car.id, car.raw_plate_read)}
+                      className='bg-cherry-dark hover:bg-cherry text-moon font-bold py-2 px-3 rounded text-xs sm:text-sm transition'
+                    >
+                      x 
+                    </button>
+                  </div>
                 </div>
 
                 {/* THE NEW LIVE MATCH UI */}

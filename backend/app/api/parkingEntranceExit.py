@@ -39,6 +39,11 @@ class ExitApprovalData(BaseModel):
     vehicle_type: str = "Car"        # ← optional, default to Car
     confidence_score: float = 0.0 
 
+class ExitDenyData(BaseModel):
+    id: str
+    plate_number: str
+    worker_id: str
+
 PARKING_RATES = {
     "Car": {"hourly_rate": 30},
     "Motor": {"hourly_rate": 15}
@@ -81,9 +86,23 @@ def approve_entrance(data: EntranceApprovalData):
 @router.delete("/api/parking/deny/entrance")
 def deny_entrance(data: EntranceApprovalData):
     try:
-        supabase.table("pendingplate").delete().eq("id", data.id).execute()
+        # FIX: Changed to .eq() which is safer for checking a single specific word
+        supabase.table("pendingplate").delete().eq("id", data.id).eq("source_gate", "Entrance").execute()
 
         return {"status": "success", "message": f"Entrance Denied: {data.plate_number}, {data.vehicle_type}"}
+    except Exception as e:
+        return {"status": "error", "message": str(e)}
+    
+@router.delete("/api/parking/deny/exit")
+def deny_exit(data: ExitDenyData):
+    try:
+        # FIX: Changed to .eq() which is safer for checking a single specific word
+        response = supabase.table("pendingplate").delete().eq("id", data.id).eq("source_gate", "Exit").execute()
+        
+        return {
+            "status": "success", 
+            "message": f"Successfully dismissed exit for {data.plate_number}"
+        }
     except Exception as e:
         return {"status": "error", "message": str(e)}
 

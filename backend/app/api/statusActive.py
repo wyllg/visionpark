@@ -20,12 +20,9 @@ router = APIRouter()
 def active_status():
     try:
         # Fetch ONLY active parking sessions
-        response = supabase.table("licenseplate")\
-            .select("*")\
-            .eq("status", "Active")\
-            .order("time_in", desc=True)\
-            .limit(100)\
-            .execute()
+        response = supabase.table("licenseplate").select(
+            "*"
+        ).eq("status", "Active").order("time_in", desc=True).limit(100).execute()
         
         return {"status": "success", "data": response.data}
         
